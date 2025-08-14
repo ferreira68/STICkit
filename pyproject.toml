@@ -7,6 +7,9 @@ license = "MIT"
 readme = "README.md"
 packages = [{ include = "stickit" }]
 
+#[tool.poetry.requires-plugins]
+#poetry-plugin-export = "1.9.0"
+
 [tool.poetry.dependencies]
 python = "^3.10"
 gypsum-dl = "^1.2.3"
@@ -20,6 +23,7 @@ ray = {version = "^2.34", optional = true}
 # If you prefer not to install ray: use multiprocessing backend
 rdkit = "^2025.3.5"
 dimorphite-dl = "^2.0.2"
+poetry-plugin-export = "^1.9.0"
 
 [tool.poetry.extras]
 ray = ["ray"]

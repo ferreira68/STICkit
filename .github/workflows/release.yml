@@ -10,16 +10,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+
       - name: Install Poetry
-        run: pip install poetry==1.8.3
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
+      - name: Check lock file
+        run: poetry check --lock
+
       - name: Build
         run: poetry build
+
       - name: Publish to PyPI
         uses: pypa/gh-action-pypi-publish@v1.10.3
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
-

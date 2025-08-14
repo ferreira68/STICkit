@@ -1,1 +1,7 @@
 __pycache__
+
+# not tracked; exported on-demand in CI
+requirements.txt
+requirements-dev.txt
+environment.yml
+

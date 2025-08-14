@@ -25,6 +25,9 @@ jobs:
           version: 2.0.1
           virtualenvs-create: false
 
+      - name: Install Poetry export plugin
+        run: poetry self add poetry-plugin-export
+
       # Ensure pyproject and poetry.lock are consistent
       - name: Check lock is up-to-date
         run: poetry check --lock

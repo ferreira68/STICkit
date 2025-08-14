@@ -1,0 +1,42 @@
+name: Check Env Drift
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - name: Install tools
+        run: |
+          pip install poetry==1.8.3 conda-lock
+          poetry self add "poetry-plugin-export"
+      - name: Export requirements
+        run: |
+          poetry export -f requirements.txt -o requirements.txt
+          poetry export -f requirements.txt --with dev -o requirements-dev.txt
+      - name: Recreate environment.in.yml
+        run: |
+          cat > environment.in.yml <<'YAML'
+          name: stickit
+          channels:
+            - conda-forge
+          dependencies:
+            - python=3.11
+            - rdkit
+            - openmm
+            - openff-toolkit
+            - pip
+            - pip:
+                - -r requirements.txt
+          YAML
+      - name: Re-lock
+        run: conda-lock lock --mamba -f environment.in.yml -p linux-64
+      - name: Fail if changes required
+        run: |
+          git add -N environment.in.yml conda-lock.yml requirements.txt requirements-dev.txt
+          git diff --exit-code || (echo "Environment files drifted; run scripts/sync_env.sh and commit." && exit 1)
+

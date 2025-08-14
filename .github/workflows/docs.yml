@@ -1,0 +1,46 @@
+name: Docs
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: mamba-org/setup-micromamba@v2
+        with:
+          environment-name: stickit-docs
+          create-args: >-
+            -c conda-forge
+            python=3.11 rdkit openmm openff-toolkit numpy pip
+          cache-environment: true
+          cache-downloads: true
+      - name: Install Poetry
+        run: pip install poetry==1.8.3
+      - name: Install deps
+        run: poetry install --with dev
+      - name: Build docs
+        run: poetry run sphinx-build -b html docs docs/_build/html
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs/_build/html
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
+

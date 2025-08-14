@@ -54,7 +54,7 @@ jobs:
 
       - name: Guard - lock & requirements sanity
         run: |
-          poetry lock --check
+          poetry check --lock
           ! grep -R "@ file:///" -n . || (echo "Found file:// refs; fix requirements.txt" && exit 1)
 
       - name: Build wheel/sdist (system Poetry)

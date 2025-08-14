@@ -20,61 +20,61 @@ jobs:
 
     defaults:
       run:
-        shell: bash -el {0}   # keep conda activation across steps
+        shell: bash -el {0}
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Cache conda pkgs (optional)
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install Poetry (system)
+        uses: snok/install-poetry@v1
+        with:
+          version: 2.0.1
+          virtualenvs-create: false
+
+      - name: Cache conda pkgs
         uses: actions/cache@v4
         with:
           path: ~/.conda/pkgs
           key: ${{ runner.os }}-condapkgs-${{ hashFiles('environment.yml') }}
           restore-keys: ${{ runner.os }}-condapkgs-
 
-      - name: Set up Miniconda
-        uses: conda-incubator/setup-miniconda@v3
-        with:
-          auto-activate-base: true
-          python-version: ${{ matrix.python-version }}
-          channels: conda-forge
-          channel-priority: strict
-          use-mamba: true
+#      - name: Set up Miniconda
+#        uses: conda-incubator/setup-miniconda@v3
+#        with:
+#          auto-activate-base: true
+#          python-version: ${{ matrix.python-version }}
+#          channels: conda-forge
+#          channel-priority: strict
+#          use-mamba: true
 
-      # If environment.yml + requirements*.txt are committed, we can create/update directly.
-      - name: Create/Update env from environment.yml
+      - name: Guard - lock & requirements sanity
+        run: |
+          poetry lock --check
+          ! grep -R "@ file:///" -n . || (echo "Found file:// refs; fix requirements.txt" && exit 1)
+
+      - name: Build wheel/sdist (system Poetry)
+        run: |
+          poetry build
+          ls -l dist/
+
+      - name: Create/Update conda env
         run: |
           conda env create -n stickit-ci -f environment.yml || \
           conda env update  -n stickit-ci -f environment.yml --prune
           conda activate stickit-ci
           python -V
 
-      - name: Install Poetry
+      - name: Install built wheel
         run: |
           conda activate stickit-ci
-          pip install poetry==2.0.1
+          pip install --no-deps dist/*.whl
 
-      - name: Guard: lock & requirements sanity
-        run: |
-          conda activate stickit-ci
-          poetry lock --check
-          ! grep -R "@ file:///" -n . || (echo "Found file:// refs; fix requirements.txt" && exit 1)
-
-      # Build the distribution we will test
-      - name: Build wheel/sdist
-        run: |
-          conda activate stickit-ci
-          poetry build
-          ls -l dist/
-
-      # Install the built wheel into the env (no deps: conda/pip already installed them)
-      - name: Install wheel
-        run: |
-          conda activate stickit-ci
-          WHEEL=$(ls dist/*.whl | head -n1)
-          pip install --no-deps "$WHEEL"
-
-      - name: Quick import smoke
+      - name: Import smoke
         run: |
           conda activate stickit-ci
           python - <<'PY'

@@ -24,7 +24,9 @@ jobs:
           cache-environment: true
           cache-downloads: true
       - name: Install Poetry
-        run: pip install poetry==1.8.3
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
       - name: Install deps
         run: poetry install --with dev
       - name: Build docs

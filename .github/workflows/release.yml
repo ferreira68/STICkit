@@ -15,7 +15,9 @@ jobs:
         with:
           python-version: "3.11"
       - name: Install Poetry
-        run: pip install poetry==1.8.3
+        uses: snok/install-poetry@v1
+        with:
+          virtualenvs-create: true
       - name: Build
         run: poetry build
       - name: Publish to PyPI

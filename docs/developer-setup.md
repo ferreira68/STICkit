@@ -1,7 +1,8 @@
 # Developer setup
 
-This project uses **Poetry** for Python deps and **conda**/**micromamba** for binary-heavy tools (RDKit/OpenMM).
-Poetry remains the *single source of truth* for Python packages. Conda supplies non-Python libs.
+This project uses **Poetry** for Python deps and other tools (e.g. RDKit, OpenMM).
+Poetry remains the *single source of truth* for Python packages. You can use `poetry build` to create a package
+that can be installed with `conda` or `pip`.
 
 
 

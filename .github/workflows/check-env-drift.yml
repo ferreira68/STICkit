@@ -41,9 +41,6 @@ jobs:
                 - -r requirements.txt
           YAML
 
-      - name: Re-lock
-        run: conda-lock lock --mamba -f environment.in.yml -p linux-64
-
       - name: Fail if changes required
         run: |
           git add -N environment.in.yml conda-lock.yml requirements.txt requirements-dev.txt

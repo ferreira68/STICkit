@@ -1,8 +1,8 @@
+# .github/workflows/ci.yml
 name: CI
-
 on:
   push:
-    branches: [ main ]
+    branches: [ main, '**' ]
   pull_request:
     branches: [ main ]
 
@@ -16,68 +16,85 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [ "3.11" ]
+        python-version: ["3.10", "3.11"]
 
-    # Make the micromamba env active for all run steps
     defaults:
       run:
-        shell: micromamba-shell {0}
+        shell: bash -el {0}   # keep conda activation across steps
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up micromamba (+conda-forge, cached)
-        uses: mamba-org/setup-micromamba@v2
-        with:
-          environment-name: stickit-ci
-          create-args: >-
-            -c conda-forge
-            python=${{ matrix.python-version }}
-            rdkit
-            openmm
-            openff-toolkit
-            numpy
-            pip
-          cache-environment: true
-          cache-downloads: true
-          init-shell: bash
-          generate-run-shell: true
-
-      - name: Install Poetry
-        uses: snok/install-poetry@v1
-        with:
-          version: 2.1.1
-          virtualenvs-create: true
-          virtualenvs-in-project: false
-          installer-parallel: true
-
-      - name: Cache Poetry downloads
+      - name: Cache conda pkgs (optional)
         uses: actions/cache@v4
         with:
-          path: ~/.cache/pypoetry
-          key: poetry-cache-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
-          restore-keys: poetry-cache-${{ runner.os }}-
+          path: ~/.conda/pkgs
+          key: ${{ runner.os }}-condapkgs-${{ hashFiles('environment.yml') }}
+          restore-keys: ${{ runner.os }}-condapkgs-
 
-      - name: Install package (locked & synchronized)
-        run: poetry install --with dev --sync
+      - name: Set up Miniconda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          auto-activate-base: true
+          python-version: ${{ matrix.python-version }}
+          channels: conda-forge
+          channel-priority: strict
+          use-mamba: true
 
-      - name: Check lock is up-to-date
-        run: poetry lock --check
-
-      - name: Quick import smoke (rdkit/openmm)
+      # If environment.yml + requirements*.txt are committed, we can create/update directly.
+      - name: Create/Update env from environment.yml
         run: |
+          conda env create -n stickit-ci -f environment.yml || \
+          conda env update  -n stickit-ci -f environment.yml --prune
+          conda activate stickit-ci
+          python -V
+
+      - name: Install Poetry
+        run: |
+          conda activate stickit-ci
+          pip install poetry==2.0.1
+
+      - name: Guard: lock & requirements sanity
+        run: |
+          conda activate stickit-ci
+          poetry lock --check
+          ! grep -R "@ file:///" -n . || (echo "Found file:// refs; fix requirements.txt" && exit 1)
+
+      # Build the distribution we will test
+      - name: Build wheel/sdist
+        run: |
+          conda activate stickit-ci
+          poetry build
+          ls -l dist/
+
+      # Install the built wheel into the env (no deps: conda/pip already installed them)
+      - name: Install wheel
+        run: |
+          conda activate stickit-ci
+          WHEEL=$(ls dist/*.whl | head -n1)
+          pip install --no-deps "$WHEEL"
+
+      - name: Quick import smoke
+        run: |
+          conda activate stickit-ci
           python - <<'PY'
-          import rdkit, openmm, openff
-          print('rdkit', rdkit.__version__)
-          print('openmm', openmm.__version__)
-          print('openff', openff.__version__)
+          import stickit, rdkit, openmm
+          from openff.toolkit import __version__ as off_ver
+          print("stickit", getattr(stickit, "__version__", "n/a"))
+          print("rdkit", rdkit.__version__)
+          print("openmm", openmm.__version__)
+          print("openff", off_ver)
           PY
 
-      - name: Run tests
-        run: poetry run pytest -q
+      - name: Tests
+        run: |
+          conda activate stickit-ci
+          pytest -q
 
       - name: Build docs
-        run: poetry run sphinx-build -b html docs docs/_build/html
+        run: |
+          conda activate stickit-ci
+          sphinx-build -b html docs docs/_build/html
 
       - name: Upload docs artifact
         uses: actions/upload-artifact@v4
@@ -85,3 +102,8 @@ jobs:
           name: docs-html
           path: docs/_build/html
 
+      - name: Upload dist artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist

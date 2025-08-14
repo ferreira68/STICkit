@@ -1,0 +1,9 @@
+name: stickit
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  - rdkit
+  - openmm
+  - openff-toolkit
+  - pip

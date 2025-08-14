@@ -1267,7 +1267,7 @@ files = [
 
 [[package]]
 name = "openff-toolkit"
-version = "0.16.10.post3+g143a70fe"
+version = "0.16.10.post4+gd70974de"
 description = "openff-toolkit"
 optional = false
 python-versions = "*"
@@ -1279,7 +1279,7 @@ develop = false
 type = "git"
 url = "https://github.com/openforcefield/openff-toolkit.git"
 reference = "HEAD"
-resolved_reference = "143a70fe42b53288b18f331ed6b1b65c55e766bf"
+resolved_reference = "d70974de36c817d886def6dbe51b62b895c39fb4"
 
 [[package]]
 name = "openmm"

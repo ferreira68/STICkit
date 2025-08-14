@@ -1,0 +1,40 @@
+[tool.poetry]
+name = "stickit"
+version = "0.1.0"
+description = "STIC generation pipeline: Stereoisomer, Tautomer, Ionization state, Conformer"
+authors = ["Your Name <you@example.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{ include = "stickit" }]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+rdkit-pypi = "^2022.9.5"            # or pin your preferred; consider conda for RDKit if needed
+dimorphite-dl = "^1.2.6"
+gypsum-dl = "^1.2.3"
+openmm = "^8.1.2"
+openff-toolkit = "^0.14.0"
+numpy = "^1.26"
+pyyaml = "^6.0"
+typing-extensions = "^4.12"
+# Parallel backends (optional)
+ray = {version = "^2.34", optional = true}
+# If you prefer not to install ray: use multiprocessing backend
+
+[tool.poetry.extras]
+ray = ["ray"]
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.2"
+sphinx = "^7.3"
+sphinx-autodoc-typehints = "^2.2"
+furo = "^2024.1.29"                 # nice Sphinx theme
+myst-parser = "^2.0.0"              # if you want Markdown in docs
+
+[tool.poetry.scripts]
+stickit = "stickit.cli:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+

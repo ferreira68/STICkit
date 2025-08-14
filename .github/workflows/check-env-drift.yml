@@ -43,6 +43,6 @@ jobs:
 
       - name: Fail if changes required
         run: |
-          git add -N environment.in.yml conda-lock.yml requirements.txt requirements-dev.txt
+          git add -N environment.in.yml requirements.txt requirements-dev.txt
           git diff --exit-code || (echo "Environment files drifted; run scripts/sync_env.sh and commit." && exit 1)
 

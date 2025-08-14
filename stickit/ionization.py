@@ -1,9 +1,9 @@
 from rdkit import Chem
-from dimorphite_dl import DimorphiteDL
+from dimorphite_dl.protonate.run import Protonate
 
 def enum_ionization_states_dimorphite(smi: str, pH: float, dPH: float, max_variants: int = 256):
     lo, hi = round(pH - dPH, 1), round(pH + dPH, 1)
-    d = DimorphiteDL(min_ph=min(lo, hi, pH), max_ph=max(lo, hi, pH), max_variants=max_variants)
+    d = Protonate(ph_min=min(lo, hi, pH), ph_max=max(lo, hi, pH), max_variants=max_variants)
     return list({s for s in d.protonate(smi)})
 
 def ionization_key(mol):

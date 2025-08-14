@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [ main ]
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -14,33 +18,62 @@ jobs:
       matrix:
         python-version: [ "3.10", "3.11" ]
 
+    # Make the micromamba env active for all run steps
+    defaults:
+      run:
+        shell: micromamba-shell {0}
+
     steps:
       - uses: actions/checkout@v4
 
-      # Fast Conda with micromamba; install rdkit/openmm from conda-forge
-      - uses: mamba-org/setup-micromamba@v2
+      - name: Set up micromamba (+conda-forge, cached)
+        uses: mamba-org/setup-micromamba@v2
         with:
           environment-name: stickit-ci
           create-args: >-
-            python=${{ matrix.python-version }}
             -c conda-forge
-            rdkit openmm openff-toolkit numpy pip
+            python=${{ matrix.python-version }}
+            rdkit
+            openmm
+            openff-toolkit
+            numpy
+            pip
           cache-environment: true
           cache-downloads: true
+          init-shell: bash
+          generate-run-shell: true
 
       - name: Install Poetry
         run: pip install poetry==1.8.3
 
-      - name: Install package (no building Conda pkgs)
-        run: poetry install --with dev
+      - name: Cache Poetry downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pypoetry
+          key: poetry-cache-${{ runner.os }}-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: poetry-cache-${{ runner.os }}-
+
+      - name: Install package (locked & synchronized)
+        run: poetry install --with dev --sync
+
+      - name: Check lock is up-to-date
+        run: poetry lock --check
+
+      - name: Quick import smoke (rdkit/openmm)
+        run: |
+          python - <<'PY'
+          import rdkit, openmm, openff
+          print('rdkit', rdkit.__version__)
+          print('openmm', openmm.__version__)
+          print('openff', openff.__version__)
+          PY
 
       - name: Run tests
         run: poetry run pytest -q
 
       - name: Build docs
-        run: |
-          poetry run sphinx-build -b html docs docs/_build/html
-        # Save docs as artifact so we can inspect on PRs
+        run: poetry run sphinx-build -b html docs docs/_build/html
+
       - name: Upload docs artifact
         uses: actions/upload-artifact@v4
         with:

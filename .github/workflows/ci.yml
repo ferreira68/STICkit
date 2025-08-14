@@ -1,5 +1,5 @@
-# .github/workflows/ci.yml
 name: CI
+
 on:
   push:
     branches: [ main, '**' ]
@@ -18,68 +18,49 @@ jobs:
       matrix:
         python-version: ["3.10", "3.11"]
 
-    defaults:
-      run:
-        shell: bash -el {0}
-
     steps:
       - uses: actions/checkout@v4
 
+      # System Python for everything (no conda)
       - uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
 
+      # Install Poetry system-wide (keeps it out of any venv we create later)
       - name: Install Poetry (system)
         uses: snok/install-poetry@v1
         with:
           version: 2.0.1
           virtualenvs-create: false
 
-      - name: Install Poetry export plugin
-        run: poetry self add poetry-plugin-export
+      # Hard gate: lock must be present & consistent with pyproject.toml
+      - name: Check lockfile
+        run: poetry check --lock
 
-      - name: Cache conda pkgs
-        uses: actions/cache@v4
-        with:
-          path: ~/.conda/pkgs
-          key: ${{ runner.os }}-condapkgs-${{ hashFiles('environment.yml') }}
-          restore-keys: ${{ runner.os }}-condapkgs-
-
-#      - name: Set up Miniconda
-#        uses: conda-incubator/setup-miniconda@v3
-#        with:
-#          auto-activate-base: true
-#          python-version: ${{ matrix.python-version }}
-#          channels: conda-forge
-#          channel-priority: strict
-#          use-mamba: true
-
-      - name: Guard - lock & requirements sanity
-        run: |
-          poetry check --lock
-          ! grep -R "@ file:///" -n . || (echo "Found file:// refs; fix requirements.txt" && exit 1)
-
-      - name: Build wheel/sdist (system Poetry)
+      # Build wheel/sdist
+      - name: Build artifacts
         run: |
           poetry build
           ls -l dist/
 
-      - name: Create/Update conda env
+      # Export reqs on-demand (not committed)
+      - name: Export requirements (runtime + dev)
         run: |
-          conda env create -n stickit-ci -f environment.yml || \
-          conda env update  -n stickit-ci -f environment.yml --prune
-          conda activate stickit-ci
-          python -V
+          poetry export -f requirements.txt -o requirements.txt
+          poetry export -f requirements.txt --with dev -o requirements-dev.txt
+          sed -n '1,50p' requirements.txt
 
-      - name: Install built wheel
+      # Install deps + then the built wheel
+      - name: Install deps and package
         run: |
-          conda activate stickit-ci
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-dev.txt
           pip install --no-deps dist/*.whl
 
+      # Quick import smoke for heavy deps
       - name: Import smoke
         run: |
-          conda activate stickit-ci
           python - <<'PY'
           import stickit, rdkit, openmm
           from openff.toolkit import __version__ as off_ver
@@ -90,14 +71,10 @@ jobs:
           PY
 
       - name: Tests
-        run: |
-          conda activate stickit-ci
-          pytest -q
+        run: pytest -q
 
       - name: Build docs
-        run: |
-          conda activate stickit-ci
-          sphinx-build -b html docs docs/_build/html
+        run: sphinx-build -b html docs docs/_build/html
 
       - name: Upload docs artifact
         uses: actions/upload-artifact@v4

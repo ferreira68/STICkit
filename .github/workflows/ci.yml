@@ -34,6 +34,9 @@ jobs:
           version: 2.0.1
           virtualenvs-create: false
 
+      - name: Install Poetry export plugin
+        run: poetry self add poetry-plugin-export
+
       # Hard gate: lock must be present & consistent with pyproject.toml
       - name: Check lockfile
         run: poetry check --lock

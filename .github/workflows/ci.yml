@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [ "3.10", "3.11" ]
+        python-version: [ "3.11" ]
 
     # Make the micromamba env active for all run steps
     defaults:
@@ -44,7 +44,7 @@ jobs:
           generate-run-shell: true
 
       - name: Install Poetry
-        run: pip install poetry==1.8.3
+        run: pip install poetry==2.0.1
 
       - name: Cache Poetry downloads
         uses: actions/cache@v4

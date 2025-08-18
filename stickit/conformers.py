@@ -1,15 +1,28 @@
-from rdkit import Chem
-from rdkit.Chem import AllChem
+from rdkit.Chem import AllChem as Chem
+from rdkit.Chem.rdMolDescriptors import CalcNumRotatableBonds
 import subprocess, tempfile
 from pathlib import Path
 
-def _rdkit_confs(mol, num_confs, rmsd_thresh):
-    m = Chem.AddHs(mol, addCoords=True)
-    ps = AllChem.ETKDGv3()
-    ps.pruneRmsThresh = rmsd_thresh
-    ids = AllChem.EmbedMultipleConfs(m, numConfs=num_confs, params=ps)
-    AllChem.MMFFOptimizeMoleculeConfs(m, maxIters=200)
-    return m, list(ids)
+def _rdkit_confs(mol: Chem.Mol, num_confs: int = 0, rmsd_thresh: float = 0.3, n_threads: int = 16):
+    if num_confs == 0:
+        num_rot = CalcNumRotatableBonds(mol)
+        if num_rot <= 7:
+            num_confs = 50
+        elif num_rot > 7 and num_rot <= 12:
+            num_confs = 200
+        else:
+            num_confs = 300
+
+    _ = Chem.MMFFGetMoleculeProperties(mol, mmffVariant='MMFF94s')
+    confIds = Chem.EmbedMultipleConfs(mol,
+                                      numConfs=num_confs,
+                                      pruneRmsThresh=rmsd_thresh,
+                                      forceTol=0.01,
+                                      enforceChirality=True,
+                                      useExpTorsionAnglePrefs=True,
+                                      useBasicKnowledge=True,
+                                      numThreads=n_threads)
+    return mol, confIds
 
 def _gypsum_confs(mol, num_confs, rmsd_thresh):
     smi = Chem.MolToSmiles(Chem.RemoveHs(mol), isomericSmiles=True)

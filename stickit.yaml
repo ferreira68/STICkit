@@ -1,38 +1,36 @@
 io:
-  input: molecules.smi                # SMILES<TAB>name per line
+  input: molecules.smi                    # SMILES<TAB>name per line
   output_dir: ./stickit_out
   write_sdf: true
   write_json: true
 
 chem:
   ph: 7.4
-  dph: 2.0
+  ph_delta: 1.0
+  ph_tol: 0.75
   max_ti_iters: 2
   max_stereoisomers: 64
-  include_atropisomers: true
-  allow_pyramidal_N: false
 
 conformers:
-  engine: gypsum                      # or rdkit
+  engine: gypsum                          # or rdkit
   num_confs: 50
   rmsd_thresh: 0.5
 
 minimization:
   engine: openmm
-  openff_forcefield: openff-2.0.0.offxml
-  implicit_solvent: null              # "OBC1" would require adding GBSA force
+  forcefield_spec: openff-2.2.0.offxml    # Any valid OpenFF forcefield
+  implicit_solvent: null                  # "OBC1" would require adding GBSA force
   max_steps: 5000
-  tol_kj_per_mol_nm: 10.0
+  gradient: 0.001                         # in kcal/mol/A
 
 mopac:
   enable: true
-  method: PM7
-  temperature_K: 298.15
-  keep_within_dG_kcal: 5.0
-  delete_imaginary: true              # prune any conformer with negative frequencies
+  method: "PM6-D3H4"
+  temperature: 298.15                     # in K
+  energy_window: 5.0                      # in kcal/mol
+  delete_imaginary: true                  # prune any conformer with negative frequencies
 
 parallel:
-  backend: multiprocessing            # or ray or none
-  num_workers: 8
-  chunksize: 8
-
+  backend: multiprocessing                # or none
+  num_workers: 16
+  chunksize: 16

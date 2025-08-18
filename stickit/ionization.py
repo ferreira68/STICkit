@@ -1,10 +1,10 @@
 from rdkit import Chem
-from dimorphite_dl.protonate.run import Protonate
+from dimorphite_dl.protonate.run import protonate_smiles
 
 def enum_ionization_states_dimorphite(smi: str, pH: float, dPH: float, max_variants: int = 256):
     lo, hi = round(pH - dPH, 1), round(pH + dPH, 1)
-    d = Protonate(ph_min=min(lo, hi, pH), ph_max=max(lo, hi, pH), max_variants=max_variants)
-    return list({s for s in d.protonate(smi)})
+    protomers = protonate_smiles(smiles_input=smi, ph_min=min(lo, hi, pH), ph_max=max(lo, hi, pH), max_variants=max_variants)
+    return protomers
 
 def ionization_key(mol):
     chg = Chem.GetFormalCharge(mol)

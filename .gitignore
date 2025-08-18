@@ -5,3 +5,4 @@ requirements.txt
 requirements-dev.txt
 environment.yml
 
+.ipynb_checkpoints

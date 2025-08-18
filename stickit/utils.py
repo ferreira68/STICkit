@@ -1,6 +1,28 @@
-import yaml, json, os
+from __future__ import annotations
+import yaml
+import json
 from rdkit import Chem
 from concurrent.futures import ProcessPoolExecutor, as_completed
+import os
+from pathlib import Path
+from typing import Optional
+
+def pathlib_which(cmd: str) -> Optional[Path]:
+    """Minimal pathlib 'which' that searches PATH (and PATHEXT on Windows)."""
+    paths = os.environ.get("PATH", "").split(os.pathsep)
+    exts = os.environ.get("PATHEXT", ".EXE;.BAT;.CMD;.COM").split(os.pathsep) if os.name == "nt" else [""]
+    for p in paths:
+        if not p:
+            continue
+        base = Path(p)
+        for ext in exts:
+            candidate = base / (cmd + ext)
+            try:
+                if candidate.is_file() and os.access(candidate, os.X_OK):
+                    return candidate.resolve()
+            except OSError:
+                continue
+    return None
 
 def load_config(path): 
     with open(path) as f: 

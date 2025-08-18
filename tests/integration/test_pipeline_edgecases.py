@@ -1,5 +1,4 @@
 import pytest
-from rdkit import Chem
 from stickit.pipeline import stic_generation
 
 @pytest.mark.parametrize("smi,name", [

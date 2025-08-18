@@ -6,6 +6,7 @@ from rdkit.Chem import SDMolSupplier
 from stickit.pipeline import stic_generation
 from tests.helpers import rmsd_between_confs
 
+
 @pytest.mark.bench
 def test_against_external_conformers(cfg, bench_data_dir):
     # Opt-in via STICKIT_BENCH_DATA=/path/to/sdf_dir (each SDF has 1+ conformers)

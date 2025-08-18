@@ -1,10 +1,8 @@
-import shutil, pytest
-from typing import Any
+import pytest
 
 from rdkit import Chem
 from stickit.mopac import mopac_refine_and_prune
 from stickit.data import STIC, STICKey, ConformerRecord
-from stickit.utils import pathlib_which
 
 
 @pytest.mark.mopac

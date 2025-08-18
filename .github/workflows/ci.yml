@@ -78,5 +78,6 @@ jobs:
         run: sphinx-build -W -b html docs docs/_build/html
 
       - name: Tests
+        working-directory: ${{ githbub.workspace }}
         run: pytest -q
 

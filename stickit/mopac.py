@@ -1,12 +1,12 @@
-from pathlib import Path
-
-from gypsum_dl.molvs import charge
-from rdkit import Chem
-import subprocess, tempfile
-from typing import Dict, Any, List, Optional, Union
 import re
+import subprocess
+import tempfile
+from pathlib import Path
+from typing import Any, Dict, List, Optional, Union
 
-from .data import STICSet, MopacCalcResult, ThermoRow
+from rdkit import Chem
+
+from .data import MopacCalcResult, STICSet, ThermoRow
 
 
 def _have_mopac(cfg: Dict[str, Any], fpath_mopac=None) -> bool:
@@ -26,8 +26,8 @@ def _write_mopac(mol, conf_id, charge, method, tempK, path):
     xyz = Chem.MolToXYZBlock(mol, confId=conf_id).splitlines()[2:]
     mol_name = f"{mol.GetProp('_Name')} : " if mol.HasProp('_Name') else ""
     preopt_keywords = (f"{method} CHARGE={charge} EPS=78.4 RSOLV=1.4 NOMM DIIS +\n"
-                    f"GNORM=2.0 LET GEO-OK\n"
-                    f"{mol_name}Geometry pre-optimization\n")
+                       f"GNORM=2.0 LET GEO-OK\n"
+                       f"{mol_name}Geometry pre-optimization\n")
 
     opt_keywords = (f"{method} CHARGE={charge} EPS=78.4 RSOLV=1.4 NOMM DIIS +\n"
                     f"PRECISE DDMIN=0.0 GNORM=0.001 LET OLDGEO\n"
@@ -49,8 +49,8 @@ def _write_mopac(mol, conf_id, charge, method, tempK, path):
 def _split_calculations(text: str) -> List[str]:
     # New calc starts at the MOPAC banner; version varies.
     return [blk.strip() for blk in re.split(
-        r'(?=^\s*\*{5,}\s*$\n^\s*\*\*.*MOPAC v[0-9.]+.*$\n)',
-        text, flags=re.M
+            r'(?=^\s*\*{5,}\s*$\n^\s*\*\*.*MOPAC v[0-9.]+.*$\n)',
+            text, flags=re.M
     ) if blk.strip()]
 
 
@@ -83,8 +83,8 @@ def _parse_results_block(block: str) -> MopacCalcResult:
     # ---- FINAL HEAT OF FORMATION: take the **last** occurrence in this block ----
     # Accept "HEAT OF FORMATION = ... KCAL/MOL", "KCALS/MOLE", with/without "FINAL".
     hof_matches = re.findall(
-        r'(?:FINAL\s+)?HEAT OF FORMATION\s*=\s*([-\d.]+)\s*KCAL(?:S)?/MOL(?:E)?',
-        block, flags=re.I
+            r'(?:FINAL\s+)?HEAT OF FORMATION\s*=\s*([-\d.]+)\s*KCAL(?:S)?/MOL(?:E)?',
+            block, flags=re.I
     )
     if hof_matches:
         res.heat_of_formation_kcal_mol = float(hof_matches[-1])
@@ -106,14 +106,14 @@ def _parse_results_block(block: str) -> MopacCalcResult:
 
     # Rotational constants / principal moments (grab if present)
     m = re.search(r'ROTATIONAL CONSTANTS.*?\n\s*A\s*=\s*([-\d.]+)\s+B\s*=\s*([-\d.]+)\s+C\s*=\s*([-\d.]+)',
-                  block, flags=re.S|re.I)
+                  block, flags=re.S | re.I)
     if m:
         res.rotational_constants_cm_inv = {"A": float(m.group(1)),
                                            "B": float(m.group(2)),
                                            "C": float(m.group(3))}
 
     m = re.search(r'PRINCIPAL MOMENTS OF INERTIA.*?\n\s*A\s*=\s*([-\d.]+)\s+B\s*=\s*([-\d.]+)\s+C\s*=\s*([-\d.]+)',
-                  block, flags=re.S|re.I)
+                  block, flags=re.S | re.I)
     if m:
         res.principal_moi_1e_minus40_g_cm2 = {"A": float(m.group(1)),
                                               "B": float(m.group(2)),
@@ -130,33 +130,33 @@ def _parse_results_block(block: str) -> MopacCalcResult:
     # ZERO POINT ENERGY: only if vibrational data present; accept with or **without** '='.
     if res.vibrational_frequencies_cm_inv:
         m = re.search(
-            r'ZERO\s+POINT\s+ENERGY(?:\s*=\s*|\s+)\s*([-\d.]+)\s*'
-            r'(KCAL(?:S)?/MOL(?:E)?|KJ/MOL|EV)',
-            block, flags=re.I
+                r'ZERO\s+POINT\s+ENERGY(?:\s*=\s*|\s+)\s*([-\d.]+)\s*'
+                r'(KCAL(?:S)?/MOL(?:E)?|KJ/MOL|EV)',
+                block, flags=re.I
         )
         if m:
-            res.zero_point_energy = {"value": float(m.group(1)), "unit": m.group(2)}
+            res.zero_point_energy = {"value": float(m[1]), "unit": m.group(2)}
 
     # Thermodynamics table → ΔG
     thermos: List[ThermoRow] = []
     pat = re.compile(
-        r'^\s*([0-9]+(?:\.[0-9]+)?)\s+VIB\..*?(?:\n.*?)*?^\s*TOT\.\s+([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)',
-        flags=re.M | re.S
+            r'^\s*([0-9]+(?:\.[0-9]+)?)\s+VIB\..*?(?:\n.*?)*?^\s*TOT\.\s+([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)\s+([-\d.]+)',
+            flags=re.M | re.S
     )
     for m in pat.finditer(block):
-        T      = float(m.group(1))
-        hof    = float(m.group(2))   # KCAL/MOL (from TOT row)
-        H_cal  = float(m.group(3))   # CAL/MOL
-        Cp     = float(m.group(4))   # CAL/K/MOL
-        S      = float(m.group(5))   # CAL/K/MOL
+        T = float(m.group(1))
+        hof = float(m.group(2))  # KCAL/MOL (from TOT row)
+        H_cal = float(m.group(3))  # CAL/MOL
+        Cp = float(m.group(4))  # CAL/K/MOL
+        S = float(m.group(5))  # CAL/K/MOL
         G_kcal = (H_cal - T * S) / 1000.0
         thermos.append(ThermoRow(
-            temperature_K=T,
-            hof_kcal_mol=hof,
-            enthalpy_cal_mol=H_cal,
-            heat_capacity_cal_K_mol=Cp,
-            entropy_cal_K_mol=S,
-            gibbs_free_energy_kcal_mol=G_kcal,
+                temperature_K=T,
+                hof_kcal_mol=hof,
+                enthalpy_cal_mol=H_cal,
+                heat_capacity_cal_K_mol=Cp,
+                entropy_cal_K_mol=S,
+                gibbs_free_energy_kcal_mol=G_kcal,
         ))
     if thermos:
         res.thermo = thermos
@@ -200,7 +200,7 @@ def mopac_refine_and_prune(sticset: STICSet, cfg):
         conf_results = []
         with tempfile.TemporaryDirectory() as td:
             for conf in stic.conformers:
-                input_deck = Path(td)/f"stic_{conf.conf_id}.mop"
+                input_deck = Path(td) / f"stic_{conf.conf_id}.mop"
                 _write_mopac(stic.mol, conf.conf_id, q, method, tempK, input_deck)
                 subprocess.run([mopac_exe, str(input_deck)], check=True)
                 output_deck = input_deck.with_suffix(".out")
@@ -223,5 +223,4 @@ def mopac_refine_and_prune(sticset: STICSet, cfg):
         if finite:
             gmin = min(c.free_energy for c in finite)
             keep = [c for c in finite if c.free_energy - gmin <= dG_keep]
-        stic.conformers = keep if keep else conf_results
-
+        stic.conformers = keep or conf_results

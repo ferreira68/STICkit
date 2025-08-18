@@ -1,13 +1,16 @@
 from typing import Iterable, List, Optional, Tuple
+
 from rdkit import Chem
-from .data import STICSet, STIC, STICKey, ConformerRecord
-from .tautomer import enum_tautomers, tautomer_key
-from .ionization import enum_ionization_states_dimorphite, ionization_key, ti_enables_new_tautomer_rules
-from .stereo import enumerate_stereo_filtered, stereo_key_for
+
 from .conformers import make_conformers
-from .openmm_min import minimize_openmm
+from .data import ConformerRecord, STIC, STICKey, STICSet
+from .ionization import enum_ionization_states_dimorphite, ionization_key, ti_enables_new_tautomer_rules
 from .mopac import mopac_refine_and_prune
-from .utils import canonical_parent_key, smiles_iter_from_file, dump_outputs, parallel_map
+from .openmm_min import minimize_openmm
+from .stereo import enumerate_stereo_filtered, stereo_key_for
+from .tautomer import enum_tautomers, tautomer_key
+from .utils import canonical_parent_key, dump_outputs, parallel_map, smiles_iter_from_file
+
 
 def _single_parent(smiles: str, name: str, cfg) -> Optional[STICSet]:
     try:
@@ -32,7 +35,8 @@ def _single_parent(smiles: str, name: str, cfg) -> Optional[STICSet]:
             t_key = tautomer_key(mol_T)
             # I (Dimorphite-DL on the tautomer SMILES)
             smi_T = Chem.MolToSmiles(mol_T, isomericSmiles=False)
-            ion_smiles = enum_ionization_states_dimorphite(smi_T, cfg['chem']['ph'], cfg['chem']['ph_delta'], max_variants=256)
+            ion_smiles = enum_ionization_states_dimorphite(smi_T, cfg['chem']['ph'], cfg['chem']['ph_delta'],
+                                                           max_variants=256)
             for smi_TI in ion_smiles:
                 mol_TI = Chem.MolFromSmiles(smi_TI)
                 if mol_TI is None:
@@ -75,9 +79,10 @@ def _single_parent(smiles: str, name: str, cfg) -> Optional[STICSet]:
 
     return sticset
 
+
 def stic_generation(
-    molecules: Optional[Iterable[tuple]] = None,  # iterable of (smiles, name)
-    config: Optional[dict] = None
+        molecules: Optional[Iterable[tuple]] = None,  # iterable of (smiles, name)
+        config: Optional[dict] = None
 ) -> List[STICSet]:
     cfg = config or {}
     if molecules is None:
@@ -87,4 +92,3 @@ def stic_generation(
     sticsets = [r for r in results if r is not None]
     dump_outputs(sticsets, cfg)
     return sticsets
-

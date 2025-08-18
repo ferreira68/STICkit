@@ -1,6 +1,9 @@
-import argparse, json
+import argparse
+import json
+
 from .pipeline import stic_generation
 from .utils import load_config
+
 
 def main():
     ap = argparse.ArgumentParser(prog="stickit")
@@ -15,4 +18,3 @@ def main():
         sticsets = stic_generation(config=cfg)  # will read input from cfg['io']['input']
         summary = {s.parent_key: sum(len(st.conformers) for st in s.stics) for s in sticsets}
         print(json.dumps(summary, indent=2))
-

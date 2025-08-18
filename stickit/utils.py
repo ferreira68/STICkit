@@ -1,11 +1,14 @@
 from __future__ import annotations
-import yaml
+
 import json
-from rdkit import Chem
-from concurrent.futures import ProcessPoolExecutor, as_completed
 import os
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 from typing import Optional
+
+import yaml
+from rdkit import Chem
+
 
 def pathlib_which(cmd: str) -> Optional[Path]:
     """Minimal pathlib 'which' that searches PATH (and PATHEXT on Windows)."""
@@ -24,24 +27,28 @@ def pathlib_which(cmd: str) -> Optional[Path]:
                 continue
     return None
 
-def load_config(path): 
-    with open(path) as f: 
+
+def load_config(path):
+    with open(path) as f:
         return yaml.safe_load(f)
+
 
 def smiles_iter_from_file(path):
     with open(path) as f:
         for line in f:
-            if not line.strip(): 
+            if not line.strip():
                 continue
             parts = line.strip().split()
             smi = parts[0]
             name = parts[1] if len(parts) > 1 else smi
             yield smi, name
 
+
 def canonical_parent_key(mol):
     m = Chem.Mol(mol)
     [a.ClearProp('_CIPCode') for a in m.GetAtoms() if a.HasProp('_CIPCode')]
     return Chem.MolToSmiles(m, isomericSmiles=False)
+
 
 def parallel_map(func, items, parallel_cfg):
     backend = (parallel_cfg or {}).get("backend", "none")
@@ -49,9 +56,11 @@ def parallel_map(func, items, parallel_cfg):
         import ray
         if not ray.is_initialized():
             ray.init(ignore_reinit_error=True, num_cpus=parallel_cfg.get("num_workers", None))
+
         @ray.remote
-        def _wrap(x): 
+        def _wrap(x):
             return func(x)
+
         return ray.get([_wrap.remote(x) for x in items])
 
     elif backend == "multiprocessing":
@@ -65,6 +74,7 @@ def parallel_map(func, items, parallel_cfg):
     else:
         return [func(x) for x in items]
 
+
 def dump_outputs(sticsets, cfg):
     outdir = cfg['io']['output_dir']
     os.makedirs(outdir, exist_ok=True)
@@ -72,17 +82,17 @@ def dump_outputs(sticsets, cfg):
         payload = []
         for s in sticsets:
             payload.append({
-                "parent_key": s.parent_key,
-                "stics": [{
-                    "key": {
-                        "parent_key": st.key.parent_key,
-                        "tautomer_key": st.key.tautomer_key,
-                        "ion_key": st.key.ion_key,
-                        "stereo_key": st.key.stereo_key,
-                    },
-                    "n_conformers": len(st.conformers),
-                    "annotations": st.annotations
-                } for st in s.stics]
+                    "parent_key": s.parent_key,
+                    "stics"     : [{
+                            "key"         : {
+                                    "parent_key"  : st.key.parent_key,
+                                    "tautomer_key": st.key.tautomer_key,
+                                    "ion_key"     : st.key.ion_key,
+                                    "stereo_key"  : st.key.stereo_key,
+                            },
+                            "n_conformers": len(st.conformers),
+                            "annotations" : st.annotations
+                    } for st in s.stics]
             })
         with open(os.path.join(outdir, "summary.json"), "w") as f:
             json.dump(payload, f, indent=2)
@@ -98,4 +108,3 @@ def dump_outputs(sticsets, cfg):
                     m.SetProp("_Name", st.annotations.get("name", s.parent_key))
                     w.write(m, confId=c.conf_id)
         w.close()
-

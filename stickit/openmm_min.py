@@ -1,12 +1,14 @@
 from typing import Any, Mapping, Optional
-from rdkit import Chem
-from rdkit.Chem import Mol as ROMol
+
 import openmm
+from openff.units.openmm import from_openmm
 from openmm import unit
 from openmm.app.simulation import Simulation
-from openff.units.openmm import from_openmm
+from rdkit import Chem
+from rdkit.Chem import Mol as ROMol
 
 from .utils import pathlib_which
+
 
 def _is_valid_forcefield(ff_name: str) -> bool:
     from openff.toolkit import get_available_force_fields
@@ -63,11 +65,10 @@ def _to_openmm_context(mol: ROMol, ff_name) -> Simulation:
 
 
 def minimize_openmm(
-    mol: ROMol,
-    cfg: Mapping[str, Any],
-    conf_ids: Optional[list[int]] = None
+        mol: ROMol,
+        cfg: Mapping[str, Any],
+        conf_ids: Optional[list[int]] = None
 ) -> tuple[ROMol, dict[int, tuple[unit.Quantity, unit.Quantity]]]:
-
     from openff.toolkit import Molecule
     ff = cfg['minimization']['forcefield_spec']
     gradient = cfg['minimization']['gradient'] * unit.kilocalorie_per_mole / unit.angstrom
@@ -108,4 +109,3 @@ def minimize_openmm(
     conformer_energies = dict(enumerate(zip(initial_energies, energies), start=0))
 
     return result_mol, conformer_energies
-

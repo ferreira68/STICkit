@@ -1,5 +1,7 @@
 from __future__ import annotations
-from typing import Dict, Any, List, Sequence, Union, Optional
+
+from typing import Any, Dict, List, Optional, Sequence, Union
+
 from rdkit import Chem
 
 
@@ -10,14 +12,14 @@ def apply_ph_from_config(config: Dict[str, Any], gypsum_opts: Dict[str, Any]) ->
 
     Returns the (possibly) updated `gypsum_opts`.
     """
-    if cfg_ops:= config.get("chem"):
+    if cfg_ops := config.get("chem"):
         base_ph = cfg_ops.get("ph", 7.4)
         ph_delta = cfg_ops.get("ph_delta", 1.0)
         ph_tol = cfg_ops.get("ph_tol", 0.75)
         gypsum_opts.update(
-            min_ph=(base_ph - ph_delta),
-            max_ph=(base_ph + ph_delta),
-            pka_precision=ph_tol,
+                min_ph=(base_ph - ph_delta),
+                max_ph=(base_ph + ph_delta),
+                pka_precision=ph_tol,
         )
     return gypsum_opts
 
@@ -57,25 +59,25 @@ def enum_tautomers(
 
     # Build a default configuration (matches CLI semantics where practical)
     gypsum_opts: Dict[str, Any] = {
-        "job_manager": "multiprocessing",
-        "num_processors": -1,                   # like CLI: -1 => use all cores
-        "max_variants_per_compound": 10,
-        "thoroughness": 16,
-        "min_ph": 6.4,
-        "max_ph": 8.4,
-        "pka_precision": 0.75,
-        "let_tautomers_change_chirality": True,
-        "use_durrant_lab_filters": True,
-        "skip_adding_hydrogen": False,
-        "skip_making_tautomers": False,
-        "skip_enumerate_chiral_mol": False,
-        "skip_enumerate_double_bonds": False,
-        "skip_optimize_geometry": True,
-        # Keep anything downstream from trying 3D/output if you expand usage later
-        "2d_output_only": True,
-        "separate_output_files": False,
-        "add_pdb_output": False,
-        "add_html_output": False,
+            "job_manager"                   : "multiprocessing",
+            "num_processors"                : -1,  # like CLI: -1 => use all cores
+            "max_variants_per_compound"     : 10,
+            "thoroughness"                  : 16,
+            "min_ph"                        : 6.4,
+            "max_ph"                        : 8.4,
+            "pka_precision"                 : 0.75,
+            "let_tautomers_change_chirality": True,
+            "use_durrant_lab_filters"       : True,
+            "skip_adding_hydrogen"          : False,
+            "skip_making_tautomers"         : False,
+            "skip_enumerate_chiral_mol"     : False,
+            "skip_enumerate_double_bonds"   : False,
+            "skip_optimize_geometry"        : True,
+            # Keep anything downstream from trying 3D/output if you expand usage later
+            "2d_output_only"                : True,
+            "separate_output_files"         : False,
+            "add_pdb_output"                : False,
+            "add_html_output"               : False,
     }
 
     # Set non-default options from config
@@ -89,7 +91,7 @@ def enum_tautomers(
 
     # Convert RDKit mols to MolContainers (Gypsum-DL SMILES stage input is SMILES)
     def _name(i: int, m: Chem.Mol) -> str:
-        return m.GetProp("_Name").strip() if m.HasProp("_Name") else f"mol{i+1:02d}"
+        return m.GetProp("_Name").strip() if m.HasProp("_Name") else f"mol{i + 1:02d}"
 
     containers: List[MolContainer] = []
     for i, m in enumerate(mol_list):
@@ -120,4 +122,3 @@ def enum_tautomers(
 
 def tautomer_key(mol):
     return Chem.MolToSmiles(Chem.AddHs(mol), isomericSmiles=False)
-

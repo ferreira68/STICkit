@@ -7,5 +7,6 @@ A pipeline for generating STICs (Stereoisomer, Tautomer, Ionization state, Confo
    :maxdepth: 2
 
    api
+   flowchart
    developer-setup
 

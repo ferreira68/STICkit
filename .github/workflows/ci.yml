@@ -26,8 +26,9 @@ jobs:
         uses: mamba-org/setup-micromamba@v2
         with:
           environment-name: stickit
-          activate-environment: stickit
-          # Create the env with the heavy native deps
+          init-shell: bash
+          cache-environment: true
+          post-cleanup: shell-init
           create-args: >-
             python=3.11
             -c conda-forge

@@ -26,15 +26,13 @@ jobs:
         uses: mamba-org/setup-micromamba@v2
         with:
           environment-name: stickit
+          activate-environment: stickit
           # Create the env with the heavy native deps
           create-args: >-
             python=3.11
             -c conda-forge
             mopac
             ambertools
-            rdkit
-            openff-toolkit
-            openmm
             pip
 
       # Install Poetry system-wide (keeps it out of any venv we create later)
@@ -43,6 +41,8 @@ jobs:
         with:
           version: 2.0.1
           virtualenvs-create: false
+          installer-parallel: true
+          installation-arguments: "--with dev"
 
       - name: Install Poetry export plugin
         run: poetry self add poetry-plugin-export
@@ -57,10 +57,10 @@ jobs:
           echo "AMBERHOME=$CONDA_PREFIX" >> "$GITHUB_ENV"
           echo "$CONDA_PREFIX/bin" >> "$GITHUB_PATH"
 
-      - name: Create /opt/mopac/bin/mopac shim
-        run: |
-          sudo mkdir -p /opt/mopac/bin
-          sudo ln -sf "$(command -v mopac)" /opt/mopac/bin/mopac
+#      - name: Create /opt/mopac/bin/mopac shim
+#        run: |
+#          sudo mkdir -p /opt/mopac/bin
+#          sudo ln -sf "$(command -v mopac)" /opt/mopac/bin/mopac
 
       - name: Sanity check toolchain
         run: |

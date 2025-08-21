@@ -11,7 +11,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  test:
+  tests:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -21,11 +21,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # System Python for everything (no conda)
-      - uses: actions/setup-python@v5
+      # Fast conda on GitHub Actions
+      - name: Set up micromamba
+        uses: mamba-org/setup-micromamba@v2
         with:
-          python-version: ${{ matrix.python-version }}
-          cache: pip
+          environment-name: stickit
+          # Create the env with the heavy native deps
+          create-args: >-
+            python=3.11
+            -c conda-forge
+            mopac
+            ambertools
+            rdkit
+            openff-toolkit
+            openmm
+            pip
 
       # Install Poetry system-wide (keeps it out of any venv we create later)
       - name: Install Poetry (system)
@@ -40,6 +50,23 @@ jobs:
       # Hard gate: lock must be present & consistent with pyproject.toml
       - name: Check lockfile
         run: poetry check --lock
+
+      - name: Export tool locations
+        run: |
+          echo "STICKIT_MOPAC_EXE=$(command -v mopac)" >> "$GITHUB_ENV"
+          echo "AMBERHOME=$CONDA_PREFIX" >> "$GITHUB_ENV"
+          echo "$CONDA_PREFIX/bin" >> "$GITHUB_PATH"
+
+      - name: Create /opt/mopac/bin/mopac shim
+        run: |
+          sudo mkdir -p /opt/mopac/bin
+          sudo ln -sf "$(command -v mopac)" /opt/mopac/bin/mopac
+
+      - name: Sanity check toolchain
+        run: |
+          which mopac || true
+          mopac -v    || mopac --version || true
+          which antechamber || true
 
       # Build wheel/sdist
       - name: Build artifacts

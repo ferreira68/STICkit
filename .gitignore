@@ -1,4 +1,5 @@
 __pycache__
+docs/_build
 
 # not tracked; exported on-demand in CI
 requirements.txt

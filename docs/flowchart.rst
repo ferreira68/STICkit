@@ -2,22 +2,16 @@ STICkit workflow
 ================
 
 .. mermaid::
+   :zoom:
 
-   flowchart TD
-     A[Start] --> B[Load config (stickit.yaml)]
-     B --> C[Load inputs (SMILES/SDF/CSV)]
-     C --> D[Sanitize & standardize
-            • remove salts/solvents
-            • neutralize if needed
-            • rdkit.Mol validation]
-     D --> E{Enumerate\nStereoisomers}
-     E --> F{Enumerate\nTautomers}
-     F --> G{Enumerate\nIonization states}
-     G --> H[Generate conformers (ETKDG)]
-     H --> I[Optimize + rank (MMFF/UFF)]
-     I --> J[Prune near-duplicates\n(RMSD/energy)]
-     J --> K[Compose STIC records
-            (S,T,I,C indices + metadata)]
-     K --> L[Deduplicate microstates
-            (canonical SMILES/InChIKey)]
-     L --> Z[End]
+   sequenceDiagram
+      participant Alice
+      participant Bob
+      Alice->John: Hello John, how are you?
+      loop Healthcheck
+          John->John: Fight against hypochondria
+      end
+      Note right of John: Rational thoughts <br/>prevail...
+      John-->Alice: Great!
+      John->Bob: How about you?
+      Bob-->John: Jolly good!

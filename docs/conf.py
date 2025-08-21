@@ -16,7 +16,8 @@ myst_fence_as_directive = ["mermaid"]   # ```mermaid ... ```
 
 # --- Mermaid settings ---
 # Option A: simplest (HTML) – render in browser with JS
-mermaid_output_format = "raw"           # default; no extra deps
+mermaid_output_format = "svg"
+mermaid_cmd = "mmdc"
 
 # (Optional) pin versions or use local assets
 # mermaid_version = "11.2.0"

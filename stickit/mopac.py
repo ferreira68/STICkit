@@ -9,16 +9,54 @@ from rdkit import Chem
 from .data import MopacCalcResult, STICSet, ThermoRow
 
 
+def _resolve_mopac_exe(cfg: Dict[str, Any], fpath_mopac=None) -> str | None:
+    """
+    Return the first executable MOPAC path found, or None if not found.
+    Precedence:
+        1) explicit fpath_mopac argument
+        2) cfg['mopac']['mopac_exe']
+        3) environment variables STICKIT_MOPAC_EXE or MOPAC_EXE
+        4) PATH lookup: 'mopac', 'MOPAC', 'mopac7', 'mopac2016', 'mopac2012'
+        5) historical default '/opt/mopac/bin/mopac'
+    """
+    import os
+    import shutil
+
+    candidates: list[str] = []
+
+    if fpath_mopac:
+     candidates.append(fpath_mopac)
+
+    mopac_opts = (cfg or {}).get("mopac", {})
+    if isinstance(mopac_opts, dict) and mopac_opts.get("mopac_exe"):
+     candidates.append(mopac_opts["mopac_exe"])
+
+    for env_key in ("STICKIT_MOPAC_EXE", "MOPAC_EXE"):
+     val = os.environ.get(env_key)
+     if val:
+         candidates.append(val)
+
+    for name in ("mopac", "MOPAC", "mopac7", "mopac2016", "mopac2012"):
+     found = shutil.which(name)
+     if found:
+         candidates.append(found)
+
+    candidates.append("/opt/mopac/bin/mopac")
+
+    for c in candidates:
+     p = Path(c).expanduser()
+     if p.exists() and os.access(str(p), os.X_OK):
+         return str(p)
+    return None
+
+
 def _have_mopac(cfg: Dict[str, Any], fpath_mopac=None) -> bool:
-    mopac_opts = cfg.get('mopac', {})
-    if fpath_mopac is not None:
-        mopac_exe = fpath_mopac
-    else:
-        mopac_exe = mopac_opts.get("mopac_exe", "/opt/mopac/bin/mopac")
-    return Path(mopac_exe).exists()
+    """Return True if MOPAC is installed and available for execution."""
+    return _resolve_mopac_exe(cfg, fpath_mopac) is not None
 
 
 def _net_charge_from_formal(mol):
+    """Calculates the net formal charge of a molecule by summing the formal charges of its atoms."""
     return sum(atom.GetFormalCharge() for atom in mol.GetAtoms())
 
 
@@ -190,7 +228,7 @@ def mopac_refine_and_prune(sticset: STICSet, cfg):
     tempK = mopac_opts.get("temperature", 298.15)
     dG_keep = mopac_opts.get("energy_window", 0.5)
     drop_imag = mopac_opts.get("delete_imaginary", True)
-    mopac_exe = mopac_opts.get('mopac_exe', '/opt/mopac/bin/mopac')
+    mopac_exe = _resolve_mopac_exe(cfg)
 
     if not _have_mopac(cfg):
         raise RuntimeError("MOPAC not installed")

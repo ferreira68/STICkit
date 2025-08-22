@@ -1,7 +1,9 @@
 __pycache__
+docs/_build
 
 # not tracked; exported on-demand in CI
 requirements.txt
 requirements-dev.txt
 environment.yml
 
+.ipynb_checkpoints

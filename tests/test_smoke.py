@@ -6,7 +6,7 @@ def test_import_and_call():
         "io":{"output_dir":"./_out","write_json":False,"write_sdf":False},
         "chem":{"ph":7.4,"dph":2.0,"max_ti_iters":1,"max_stereoisomers":8,"include_atropisomers":True,"allow_pyramidal_N":False},
         "conformers":{"engine":"rdkit","num_confs":2,"rmsd_thresh":0.5},
-        "minimization":{"engine":"openmm","openff_forcefield":"openff-2.0.0.offxml","implicit_solvent":None,"max_steps":10,"tol_kj_per_mol_nm":10.0},
+        "minimization":{"engine":"openmm","forcefield_spec":"openff-2.2.0.offxml","implicit_solvent":None,"max_steps":10,"tol_kj_per_mol_nm":10.0},
         "mopac":{"enable":False},
         "parallel":{"backend":"none"}
     })

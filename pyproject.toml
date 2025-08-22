@@ -13,8 +13,15 @@ packages = [{ include = "stickit" }]
 [tool.poetry.dependencies]
 python = "^3.10"
 gypsum-dl = "^1.2.3"
-openmm = "^8.1.2"
-openff-toolkit = { git = "https://github.com/openforcefield/openff-toolkit.git", extras = ["all"]}
+openmm = "~8.2"
+openmm-cuda-12 = "~8.2"
+openforcefields = { git = "https://github.com/openforcefield/openff-forcefields", rev = "2024.09.0" }
+smirnoff99frosst = { git = "https://github.com/openforcefield/smirnoff99Frosst", rev = "1.1.0" }
+openff-interchange = { git = "https://github.com/openforcefield/openff-interchange", rev = "v0.4.4" }
+openff-toolkit = { git = "https://github.com/openforcefield/openff-toolkit.git", extras = ["all"], rev =  "0.16.10" }
+openff-units = { git = "https://github.com/openforcefield/openff-units", rev = "0.3.1" }
+openff-utilities = { git = "https://github.com/openforcefield/openff-utilities", rev = "v0.1.15"}
+networkx = "3.4.2"
 numpy = "^1.26"
 pyyaml = "^6.0"
 typing-extensions = "^4.12"
@@ -24,6 +31,19 @@ ray = {version = "^2.34", optional = true}
 rdkit = "^2025.3.5"
 dimorphite-dl = "^2.0.2"
 poetry-plugin-export = "^1.9.0"
+pip = "==25.2"
+pint = "^0.24.4"
+importlib-resources = "^6.5.2"
+cachetools = "^6.1.0"
+xmltodict = "^0.14.2"
+notebook = "^7.4.5"
+simtk = "^0.1.0"
+pydantic = "^2.11.7"
+python-constraint = "^1.4.0"
+rich = "^14.1.0"
+parmed = "^4.3.0"
+sphinxcontrib-mermaid = "^1.0.0"
+
 
 [tool.poetry.extras]
 ray = ["ray"]
@@ -32,8 +52,9 @@ ray = ["ray"]
 pytest = "^8.2"
 sphinx = "^7.3"
 sphinx-autodoc-typehints = "^2.2"
-furo = "^2024.1.29"                 # nice Sphinx theme
-myst-parser = "^2.0.0"              # if you want Markdown in docs
+furo = "^2024.1.29"
+myst-parser = "^2.0.0"
+sphinxcontrib-mermaid = "^1.0.0"
 
 [tool.poetry.scripts]
 stickit = "stickit.cli:main"
@@ -41,4 +62,17 @@ stickit = "stickit.cli:main"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+#addopts = "-ra --disable-warnings"
+addopts = "-ra"
+testpaths = ["tests"]
+markers = [
+  "slow: time-consuming tests (skipped in CI by default)",
+  "medium: medium-size molecules",
+  "large: large molecules",
+  "mopac: requires MOPAC executable",
+  "bench: optional benchmark/regression tests",
+]
 

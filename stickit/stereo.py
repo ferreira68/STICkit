@@ -1,6 +1,7 @@
 from rdkit import Chem
 from rdkit.Chem.EnumerateStereoisomers import EnumerateStereoisomers, StereoEnumerationOptions
 
+
 def _exclude_labile_centers(mol, allow_pyramidal_N=False):
     mask = set()
     for a in mol.GetAtoms():
@@ -10,6 +11,7 @@ def _exclude_labile_centers(mol, allow_pyramidal_N=False):
             if not allow_pyramidal_N:
                 mask.add(a.GetIdx())
     return mask
+
 
 def enumerate_stereo_filtered(mol, cfg):
     Chem.AssignStereochemistry(mol, cleanIt=True, force=True)
@@ -25,6 +27,6 @@ def enumerate_stereo_filtered(mol, cfg):
         if not bad:
             yield m
 
+
 def stereo_key_for(mol):
     return Chem.MolToSmiles(mol, isomericSmiles=True)
-

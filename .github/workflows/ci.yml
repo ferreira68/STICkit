@@ -18,15 +18,20 @@ jobs:
       matrix:
         python-version: ["3.11", "3.12"]
 
+    # IMPORTANT: run a login shell so micromamba's rc hook activates the env
+    defaults:
+      run:
+        shell: bash -el {0}
+
     steps:
       - uses: actions/checkout@v4
 
-      # Fast conda on GitHub Actions
       - name: Set up micromamba
         uses: mamba-org/setup-micromamba@v2
         with:
-          environment-name: stickit
           init-shell: bash
+          # make env unique per Python to avoid cache/key contention
+          environment-name: stickit-py${{ matrix.python-version }}
           cache-environment: true
           cache-environment-key: >-
             ${{ runner.os }}-mamba-env-stickit-${{ matrix.python-version }}-
@@ -35,14 +40,18 @@ jobs:
           cache-downloads-key: >-
             ${{ runner.os }}-conda-pkgs-${{ matrix.python-version }}
           post-cleanup: shell-init
+          # build the env for THIS Python and include smirnoff99frosst from conda
           create-args: >-
-            python=3.11
             -c conda-forge
+            python=${{ matrix.python-version }}
             mopac
             ambertools
+            rdkit
+            openff-toolkit
+            openmm
+            smirnoff99frosst
             pip
 
-      # Install Poetry system-wide (keeps it out of any venv we create later)
       - name: Install Poetry (system)
         uses: snok/install-poetry@v1
         with:
@@ -53,7 +62,6 @@ jobs:
       - name: Install Poetry export plugin
         run: poetry self add poetry-plugin-export
 
-      # Hard gate: lock must be present & consistent with pyproject.toml
       - name: Check lockfile
         run: poetry check --lock
 
@@ -63,43 +71,46 @@ jobs:
           echo "AMBERHOME=$CONDA_PREFIX" >> "$GITHUB_ENV"
           echo "$CONDA_PREFIX/bin" >> "$GITHUB_PATH"
 
-#      - name: Create /opt/mopac/bin/mopac shim
-#        run: |
-#          sudo mkdir -p /opt/mopac/bin
-#          sudo ln -sf "$(command -v mopac)" /opt/mopac/bin/mopac
-
       - name: Sanity check toolchain
         run: |
+          which python
+          python -V
           which mopac || true
-          mopac -v    || mopac --version || true
           which antechamber || true
 
-      # Build wheel/sdist
       - name: Build artifacts
         run: |
           poetry build
           ls -l dist/
 
-      # Export reqs on-demand (not committed)
       - name: Export requirements (runtime + dev)
         run: |
           poetry export --without-hashes -f requirements.txt -o requirements.txt
           poetry export --without-hashes -f requirements.txt --with dev -o requirements-dev.txt
           sed -n '1,50p' requirements.txt
 
-      # Install deps + then the built wheel
+      # Workaround: avoid building smirnoff99Frosst from a Git commit on Python 3.12
+      - name: Py3.12 workaround for smirnoff99Frosst (remove VCS line)
+        if: ${{ matrix.python-version == '3.12' }}
+        run: |
+          for f in requirements.txt requirements-dev.txt; do
+            # drop any VCS lines for smirnoff99Frosst; we already have the conda package
+            grep -vi 'smirnoff99frosst' "$f" > "$f.new"
+            mv "$f.new" "$f"
+          done
+
       - name: Install deps and package
         run: |
-#          python -m pip install --upgrade pip
+          python -m pip install --upgrade pip
           pip install -r requirements.txt -r requirements-dev.txt
           pip install --no-deps dist/*.whl
 
-      # Quick import smoke for heavy deps
       - name: Import smoke
         run: |
           python - <<'PY'
           import stickit, rdkit, openmm
           from openff.toolkit import __version__ as off_ver
+          print("python", __import__('sys').version.split()[0])
           print("stickit", getattr(stickit, "__version__", "n/a"))
           print("rdkit", rdkit.__version__)
           print("openmm", openmm.__version__)
@@ -111,6 +122,4 @@ jobs:
         run: sphinx-build -W -b html docs docs/_build/html
 
       - name: Tests
-        working-directory: ${{ github.workspace }}
         run: pytest -q
-

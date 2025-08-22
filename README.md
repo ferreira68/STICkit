@@ -36,9 +36,14 @@ This makes STICs the most granular, physically-realizable “version” of a mol
 ## Install
 
 ### Dependencies
+#### AmberTools
 STICkit requires AmberTools 23.6 or newer.
 This can be install easily with conda or at the system level.
 See the [AmberTools website](https://ambermd.org/Installation.php) for more details.
 
+#### MOPAC
+STICkit requires OpenMOPAC 2023.0 or newer.
+
 ```bash
 poetry install --with dev        # add --extras ray if you want Ray parallelism
+```

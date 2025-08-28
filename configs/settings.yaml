@@ -1,0 +1,10 @@
+# Non-secret defaults; secrets from AWS Secrets Manager or SOPS-encrypted file.
+db:
+  url: "postgresql+psycopg://user:pass@localhost:5432/stickit"
+
+secrets_manager:
+  enabled: false
+  region_name: "us-east-1"
+  secret_name: "stickit/default"
+
+mlflow_tracking_uri: "file:./mlruns"

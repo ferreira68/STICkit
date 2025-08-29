@@ -262,6 +262,7 @@ graph TD
   "stickit.openmm_min.have_antechamber"["stickit.openmm_min.have_antechamber"]
   "stickit.openmm_min.minimize_openmm"["stickit.openmm_min.minimize_openmm"]
   "stickit.parallel.mp.run_parallel"["stickit.parallel.mp.run_parallel"]
+  "stickit.parallel.spark.<module>"["stickit.parallel.spark.<module>"]
   "stickit.parallel.spark.etl_example"["stickit.parallel.spark.etl_example"]
   "stickit.parallel.spark.get_spark"["stickit.parallel.spark.get_spark"]
   "stickit.pipeline._single_parent"["stickit.pipeline._single_parent"]
@@ -503,6 +504,7 @@ graph TD
   "stickit.parallel.mp.run_parallel" --> "ex.submit"
   "stickit.parallel.mp.run_parallel" --> "f.result"
   "stickit.parallel.mp.run_parallel" --> "out.append"
+  "stickit.parallel.spark.<module>" --> "print"
   "stickit.parallel.spark.etl_example" --> "df.limit"
   "stickit.parallel.spark.etl_example" --> "spark.read.parquet"
   "stickit.parallel.spark.get_spark" --> "SparkSession.builder.appName"

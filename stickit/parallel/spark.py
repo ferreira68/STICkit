@@ -1,11 +1,13 @@
 from __future__ import annotations
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 
 try:
     from pyspark.sql import SparkSession, DataFrame
-except Exception:  # pragma: no cover
-    SparkSession = None
-    DataFrame = None
+except Exception as e:  # pragma: no cover
+    print(f"Unable to import pyspark: {e}")
+    if not TYPE_CHECKING:
+        SparkSession = None
+        DataFrame = None
 
 
 def get_spark(app_name: str = "stickit") -> Optional["SparkSession"]:

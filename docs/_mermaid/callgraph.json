@@ -399,6 +399,9 @@
   "stickit.ml.registry.load_model": [
     "mlflow.pyfunc.load_model"
   ],
+  "stickit.parallel.spark.<module>": [
+    "print"
+  ],
   "stickit.data.MopacCalcResult.to_dict": [
     "asdict"
   ],

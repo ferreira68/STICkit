@@ -90,11 +90,12 @@ jobs:
           sed -n '1,50p' requirements.txt
 
       # Workaround: avoid building smirnoff99Frosst from a Git commit on Python 3.12
+      # - We already have the conda package, so drop the VCS line from the requirements
       - name: Py3.12 workaround for smirnoff99Frosst (remove VCS line)
         if: ${{ matrix.python-version == '3.12' }}
         run: |
           for f in requirements.txt requirements-dev.txt; do
-            # drop any VCS lines for smirnoff99Frosst; we already have the conda package
+            # drop any VCS lines for smirnoff99Frosst
             grep -vi 'smirnoff99frosst' "$f" > "$f.new"
             mv "$f.new" "$f"
           done

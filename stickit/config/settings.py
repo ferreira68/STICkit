@@ -9,7 +9,7 @@ import yaml
 try:
     import boto3  # optional
 except Exception:
-    boto3 = None  # type: ignore
+    boto3 = None
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 CONFIG_DIR = REPO_ROOT / "configs"
@@ -44,9 +44,7 @@ class Settings:
         sm = data.get("secrets_manager", {})
         if sm.get("enabled") and boto3 is not None:
             try:
-                client = boto3.client(
-                    "secretsmanager", region_name=sm.get("region_name", "us-east-1")
-                )
+                client = boto3.client("secretsmanager", region_name=sm.get("region_name", "us-east-1"))
                 resp = client.get_secret_value(SecretId=sm["secret_name"])
                 secret_str = resp.get("SecretString") or "{}"
                 secret_data = json.loads(secret_str)
@@ -63,9 +61,7 @@ class Settings:
                 sops_path = shutil.which("sops")
                 if not sops_path:
                     raise FileNotFoundError("sops not found on PATH")
-                out = subprocess.check_output(
-                    [sops_path, "-d", str(enc)], text=True, timeout=30
-                )  # nosec B603
+                out = subprocess.check_output([sops_path, "-d", str(enc)], text=True, timeout=30)  # nosec B603
                 enc_data = yaml.safe_load(out) or {}
                 data = _deep_merge(data, enc_data)
             except Exception as e:
@@ -84,7 +80,7 @@ def _deep_merge(a: Dict[str, Any], b: Dict[str, Any]) -> Dict[str, Any]:
     out = dict(a)
     for k, v in b.items():
         if isinstance(v, dict) and isinstance(out.get(k), dict):
-            out[k] = _deep_merge(out[k], v)  # type: ignore
+            out[k] = _deep_merge(out[k], v)
         else:
             out[k] = v
     return out

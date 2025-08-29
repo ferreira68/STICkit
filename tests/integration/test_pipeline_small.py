@@ -3,9 +3,7 @@ import pytest
 from stickit.pipeline import stic_generation
 
 
-@pytest.mark.parametrize(
-    "dataset_fixture", ["small_mols"]
-)  # add "medium_mols" if you like
+@pytest.mark.parametrize("dataset_fixture", ["small_mols"])  # add "medium_mols" if you like
 def test_pipeline_param(cfg, request, dataset_fixture):
     mols = request.getfixturevalue(dataset_fixture)
     sticsets = stic_generation(molecules=mols, config=cfg)

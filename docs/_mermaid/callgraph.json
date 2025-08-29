@@ -233,11 +233,6 @@
     "st.annotations.get",
     "json.dump"
   ],
-  "stickit.conformers._rdkit_confs": [
-    "Chem.MMFFGetMoleculeProperties",
-    "CalcNumRotatableBonds",
-    "Chem.EmbedMultipleConfs"
-  ],
   "stickit.mopac._resolve_mopac_exe": [
     "str",
     "p.exists",
@@ -384,6 +379,11 @@
     "len",
     "open",
     "line.strip"
+  ],
+  "stickit.conformers._rdkit_confs": [
+    "EmbedMultipleConfs",
+    "CalcNumRotatableBonds",
+    "MMFFGetMoleculeProperties"
   ],
   "stickit.parallel.mp.run_parallel": [
     "ProcessPoolExecutor",

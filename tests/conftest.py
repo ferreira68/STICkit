@@ -23,23 +23,23 @@ except Exception:
 
 # Bump file descriptor soft limit if possible (Linux/macOS).
 try:
-    import resource  # type: ignore[attr-defined]
+    import resource
 
-    soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)  # type: ignore[attr-defined]
+    soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
     new_soft = min(max(soft, 8192), hard)  # raise to 8192 if allowed
     if new_soft != soft:
-        resource.setrlimit(resource.RLIMIT_NOFILE, (new_soft, hard))  # type: ignore[attr-defined]
+        resource.setrlimit(resource.RLIMIT_NOFILE, (new_soft, hard))
 except Exception:
     pass
 
-# Clamp hidden thread pools to avoid oversubscription during tests.
-os.environ.setdefault("OMP_NUM_THREADS", "4")
-os.environ.setdefault("OPENBLAS_NUM_THREADS", "4")
-os.environ.setdefault("MKL_NUM_THREADS", "4")
-os.environ.setdefault("NUMEXPR_NUM_THREADS", "4")
-
-# Let our code (and wrappers like Gypsum) know to keep process parallelism modest.
-os.environ.setdefault("STICKIT_PARALLEL_PROCS", "4")
+# # Clamp hidden thread pools to avoid oversubscription during tests.
+# os.environ.setdefault("OMP_NUM_THREADS", "4")
+# os.environ.setdefault("OPENBLAS_NUM_THREADS", "4")
+# os.environ.setdefault("MKL_NUM_THREADS", "4")
+# os.environ.setdefault("NUMEXPR_NUM_THREADS", "4")
+#
+# # Let our code (and wrappers like Gypsum) know to keep process parallelism modest.
+# os.environ.setdefault("STICKIT_PARALLEL_PROCS", "4")
 
 
 def has_cuda() -> bool:
@@ -48,14 +48,12 @@ def has_cuda() -> bool:
             smi = shutil.which("nvidia-smi")
             if not smi:
                 return False
-            out = subprocess.check_output(
-                [smi], stderr=subprocess.STDOUT, timeout=5
-            )  # nosec B603
+            out = subprocess.check_output([smi], stderr=subprocess.STDOUT, timeout=5)  # nosec B603
             return b"CUDA" in out or b"NVIDIA-SMI" in out
         except Exception:
             return False
     try:
-        import torch  # type: ignore
+        import torch
 
         return torch.cuda.is_available()
     except Exception:
@@ -72,16 +70,12 @@ def pytest_addoption(parser: pytest.Parser) -> None:
     )
 
 
-def pytest_collection_modifyitems(
-    config: pytest.Config, items: list[pytest.Item]
-) -> None:
+def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item]) -> None:
     require_gpu = config.getoption("--require-gpu")
     for item in items:
         if "gpu" in item.keywords and not has_cuda():
             if require_gpu:
-                item.add_marker(
-                    pytest.mark.xfail(reason="CUDA not available", run=False)
-                )
+                item.add_marker(pytest.mark.xfail(reason="CUDA not available", run=False))
             else:
                 item.add_marker(pytest.mark.skip(reason="CUDA not available"))
 

@@ -94,9 +94,7 @@ def _split_calculations(text: str) -> List[str]:
     # New calc starts at the MOPAC banner; version varies.
     return [
         blk.strip()
-        for blk in re.split(
-            r"(?=^\s*\*{5,}\s*$\n^\s*\*\*.*MOPAC v[0-9.]+.*$\n)", text, flags=re.M
-        )
+        for blk in re.split(r"(?=^\s*\*{5,}\s*$\n^\s*\*\*.*MOPAC v[0-9.]+.*$\n)", text, flags=re.M)
         if blk.strip()
     ]
 
@@ -152,9 +150,7 @@ def _parse_results_block(block: str) -> MopacCalcResult | None:
     if m:
         res.homo_lumo_ev = [float(m.group(1)), float(m.group(2))]
 
-    m = re.search(
-        r"MOLECULAR WEIGHT\s*=\s*([0-9.]+)\s+POINT GROUP:\s*([A-Za-z0-9]+)", block
-    )
+    m = re.search(r"MOLECULAR WEIGHT\s*=\s*([0-9.]+)\s+POINT GROUP:\s*([A-Za-z0-9]+)", block)
     if m:
         res.molecular_weight = float(m.group(1))
         res.point_group = m.group(2)
@@ -193,8 +189,7 @@ def _parse_results_block(block: str) -> MopacCalcResult | None:
     # ZERO POINT ENERGY: only if vibrational data present; accept with or **without** '='.
     if res.vibrational_frequencies_cm_inv:
         if m := re.search(
-            r"ZERO\s+POINT\s+ENERGY(?:\s*=\s*|\s+)\s*([-\d.]+)\s*"
-            r"(KCAL(?:S)?/MOL(?:E)?|KJ/MOL|EV)",
+            r"ZERO\s+POINT\s+ENERGY(?:\s*=\s*|\s+)\s*([-\d.]+)\s*" r"(KCAL(?:S)?/MOL(?:E)?|KJ/MOL|EV)",
             block,
             flags=re.I,
         ):
@@ -282,18 +277,12 @@ def mopac_refine_and_prune(sticset: STICSet, cfg):
                 results = cast(Dict[str, Any], calcs_any[-1])
 
                 freqs_any = results.get("vibrational_frequencies_cm_inv")
-                freqs: List[float] = (
-                    [float(x) for x in freqs_any] if isinstance(freqs_any, list) else []
-                )
+                freqs: List[float] = [float(x) for x in freqs_any] if isinstance(freqs_any, list) else []
                 conf.n_imag_freq = sum(freq < 0 for freq in freqs)
 
                 method_name = str(results.get("method") or "MOPAC")
                 hof_any = results.get("heat_of_formation_kcal_mol")
-                hof_val = (
-                    float(hof_any)
-                    if isinstance(hof_any, (int, float))
-                    else float("nan")
-                )
+                hof_val = float(hof_any) if isinstance(hof_any, (int, float)) else float("nan")
                 energy_record: Dict[str, float] = {method_name: hof_val}
                 conf.enthalpy = energy_record
 
@@ -304,9 +293,7 @@ def mopac_refine_and_prune(sticset: STICSet, cfg):
                         if (
                             isinstance(r, dict)
                             and r.get("temperature_K") == 298.0
-                            and isinstance(
-                                r.get("gibbs_free_energy_kcal_mol"), (int, float)
-                            )
+                            and isinstance(r.get("gibbs_free_energy_kcal_mol"), (int, float))
                         ):
                             fe = float(r["gibbs_free_energy_kcal_mol"])
                             break

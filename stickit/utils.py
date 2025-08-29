@@ -13,11 +13,7 @@ from rdkit import Chem
 def pathlib_which(cmd: str) -> Optional[Path]:
     """Minimal pathlib 'which' that searches PATH (and PATHEXT on Windows)."""
     paths = os.environ.get("PATH", "").split(os.pathsep)
-    exts = (
-        os.environ.get("PATHEXT", ".EXE;.BAT;.CMD;.COM").split(os.pathsep)
-        if os.name == "nt"
-        else [""]
-    )
+    exts = os.environ.get("PATHEXT", ".EXE;.BAT;.CMD;.COM").split(os.pathsep) if os.name == "nt" else [""]
     for p in paths:
         if not p:
             continue

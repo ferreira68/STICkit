@@ -4,9 +4,7 @@ graph TD
   "CalcNumRotatableBonds"["CalcNumRotatableBonds"]
   "Chem.AddHs"["Chem.AddHs"]
   "Chem.AssignStereochemistry"["Chem.AssignStereochemistry"]
-  "Chem.EmbedMultipleConfs"["Chem.EmbedMultipleConfs"]
   "Chem.GetFormalCharge"["Chem.GetFormalCharge"]
-  "Chem.MMFFGetMoleculeProperties"["Chem.MMFFGetMoleculeProperties"]
   "Chem.Mol"["Chem.Mol"]
   "Chem.MolFromSmarts"["Chem.MolFromSmarts"]
   "Chem.MolFromSmiles"["Chem.MolFromSmiles"]
@@ -19,9 +17,11 @@ graph TD
   "Chem.rdmolops.NeedsHs"["Chem.rdmolops.NeedsHs"]
   "ConformerRecord"["ConformerRecord"]
   "DBConfig"["DBConfig"]
+  "EmbedMultipleConfs"["EmbedMultipleConfs"]
   "EnumerateStereoisomers"["EnumerateStereoisomers"]
   "FileNotFoundError"["FileNotFoundError"]
   "Interchange.from_smirnoff"["Interchange.from_smirnoff"]
+  "MMFFGetMoleculeProperties"["MMFFGetMoleculeProperties"]
   "MolContainer"["MolContainer"]
   "Molecule.from_rdkit"["Molecule.from_rdkit"]
   "MopacCalcResult"["MopacCalcResult"]
@@ -352,8 +352,8 @@ graph TD
   "stickit.conformers._gypsum_confs" --> "subprocess.run"
   "stickit.conformers._gypsum_confs" --> "tempfile.TemporaryDirectory"
   "stickit.conformers._rdkit_confs" --> "CalcNumRotatableBonds"
-  "stickit.conformers._rdkit_confs" --> "Chem.EmbedMultipleConfs"
-  "stickit.conformers._rdkit_confs" --> "Chem.MMFFGetMoleculeProperties"
+  "stickit.conformers._rdkit_confs" --> "EmbedMultipleConfs"
+  "stickit.conformers._rdkit_confs" --> "MMFFGetMoleculeProperties"
   "stickit.conformers.make_conformers" --> "_gypsum_confs"
   "stickit.conformers.make_conformers" --> "_rdkit_confs"
   "stickit.data.ConformerRecord" --> "field"

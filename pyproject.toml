@@ -94,6 +94,13 @@ filterwarnings = [
   "ignore:Deprecated call to `pkg_resources\\.declare_namespace.*`:DeprecationWarning:pkg_resources",
 ]
 
+[tool.black]
+line-length = 120
+target-version = ["py311"]
+
+[tool.ruff]
+line-length = 120
+
 [tool.mypy]
 python_version = "3.11"
 warn_unused_ignores = true

@@ -24,8 +24,5 @@ def test_against_external_conformers(cfg, bench_data_dir):
         assert outs
         stic = outs[0].stics[0]
         # crude: compare best RMSD of any generated conf to the first ref conf
-        best = min(
-            rmsd_between_confs(stic.mol, c.conf_id, stic.mol.GetConformer(0).GetId())
-            for c in stic.conformers
-        )
+        best = min(rmsd_between_confs(stic.mol, c.conf_id, stic.mol.GetConformer(0).GetId()) for c in stic.conformers)
         assert best < 2.0  # loose threshold

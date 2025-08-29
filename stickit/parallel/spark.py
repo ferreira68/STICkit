@@ -2,10 +2,10 @@ from __future__ import annotations
 from typing import Optional
 
 try:
-    from pyspark.sql import SparkSession, DataFrame  # type: ignore
+    from pyspark.sql import SparkSession, DataFrame
 except Exception:  # pragma: no cover
-    SparkSession = None  # type: ignore
-    DataFrame = None  # type: ignore
+    SparkSession = None
+    DataFrame = None
 
 
 def get_spark(app_name: str = "stickit") -> Optional["SparkSession"]:

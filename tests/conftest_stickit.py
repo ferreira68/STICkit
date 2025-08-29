@@ -17,8 +17,6 @@ def pytest_collection_modifyitems(config, items):
     for item in items:
         if "gpu" in item.keywords and not has_cuda():
             if require_gpu:
-                item.add_marker(
-                    pytest.mark.xfail(reason="CUDA not available", run=False)
-                )
+                item.add_marker(pytest.mark.xfail(reason="CUDA not available", run=False))
             else:
                 item.add_marker(pytest.mark.skip(reason="CUDA not available"))

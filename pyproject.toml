@@ -89,4 +89,8 @@ markers = [
   "mopac: requires MOPAC executable",
   "bench: optional benchmark/regression tests",
 ]
+filterwarnings = [
+  "ignore:pkg_resources is deprecated as an API.*:UserWarning:smirnoff99frosst",
+  "ignore:Deprecated call to `pkg_resources\\.declare_namespace.*`:DeprecationWarning:pkg_resources",
+]
 

@@ -148,6 +148,7 @@
     "interchange.to_openmm_simulation",
     "AmberToolsToolkitWrapper",
     "offmol.to_topology",
+    "print",
     "openmm.VerletIntegrator",
     "Interchange.from_smirnoff",
     "OFFForceField",

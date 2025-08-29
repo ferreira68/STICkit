@@ -12,17 +12,21 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
+
       - name: Install Poetry
         uses: abatilo/actions-poetry@v3
+
       - name: System deps
         run: |
           sudo apt-get update
           sudo apt-get install -y graphviz
+
       - name: Install project
         run: poetry install --with dev
+
       - name: Lint/Type/Tests/Docs/Diagrams
         run: |
-          make -f Makefile ci-check
+          poetry run make -f Makefile ci-check
       - name: Upload docs HTML
         uses: actions/upload-artifact@v4
         with:

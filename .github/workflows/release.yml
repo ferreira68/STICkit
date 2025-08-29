@@ -20,6 +20,7 @@ jobs:
         uses: snok/install-poetry@v1
         with:
           virtualenvs-create: true
+
       - name: Check lock file
         run: poetry check --lock
 

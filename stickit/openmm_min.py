@@ -62,8 +62,14 @@ def _to_openmm_context(mol: ROMol, ff_name) -> Simulation:
         )
         charge_kwargs["charge_from_molecules"] = [offmol]
     elif offmol.partial_charges is not None:
+        print(
+            "WARNING: Unable to assign partial charges with AmberTools; using charges from molecule"
+        )
         charge_kwargs["charge_from_molecules"] = [offmol]
     else:
+        print(
+            "WARNING: Unable to assign partial charges with AmberTools; falling back to Gasteiger from RDKit"
+        )
         RDKitToolkitWrapper().assign_partial_charges(
             offmol, partial_charge_method="gasteiger"
         )

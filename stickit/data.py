@@ -68,7 +68,7 @@ class MopacCalcResult:
     point_group: Optional[str] = None
     rotational_constants_cm_inv: Optional[Dict[str, float]] = None  # A,B,C
     principal_moi_1e_minus40_g_cm2: Optional[Dict[str, float]] = None  # A,B,C
-    zero_point_energy: Optional[Dict[str, float]] = None  # only if freqs present
+    zero_point_energy: Optional[Dict[str, float | str]] = None  # only if freqs present
     vibrational_frequencies_cm_inv: Optional[List[float]] = None
     thermo: Optional[List[ThermoRow]] = None
 

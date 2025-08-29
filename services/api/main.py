@@ -3,8 +3,14 @@ from pydantic import BaseModel
 
 app = FastAPI(title="STICkit API")
 
-class EchoReq(BaseModel): text: str
-class EchoResp(BaseModel): text: str
+
+class EchoReq(BaseModel):
+    text: str
+
+
+class EchoResp(BaseModel):
+    text: str
+
 
 @app.post("/echo", response_model=EchoResp)
 def echo(req: EchoReq) -> EchoResp:

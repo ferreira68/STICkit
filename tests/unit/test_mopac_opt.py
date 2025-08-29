@@ -12,10 +12,12 @@ def test_mopac_prunes_imaginary(tmp_path, test_cfg_base):
     m = Chem.MolFromSmiles("CCO")
     m = Chem.AddHs(m)
     from rdkit.Chem import AllChem
+
     AllChem.EmbedMolecule(m)
     key = STICKey("CCO", "CCO", "q0", "CCO")
     stic = STIC(key, m, [ConformerRecord(conf_id=0)], {})
     from stickit.data import STICSet
+
     st = STICSet("CCO", [stic])
     mopac_refine_and_prune(st, cfg)
     # either pruned to 0 (if imaginary) or still 1; test just ensures call succeeds

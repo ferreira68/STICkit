@@ -3,6 +3,7 @@ from sqlalchemy import String, Integer, Float
 from sqlalchemy.orm import Mapped, mapped_column
 from .session import Base
 
+
 class Molecule(Base):
     __tablename__ = "molecules"
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)

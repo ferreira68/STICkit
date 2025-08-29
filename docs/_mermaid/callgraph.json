@@ -1,0 +1,440 @@
+{
+  "stickit.utils.pathlib_which": [
+    "os.environ.get",
+    "candidate.resolve",
+    "candidate.is_file",
+    "os.access",
+    "Path"
+  ],
+  "stickit.openmm_min.minimize_openmm": [
+    "dict",
+    "minimized_mol.conformers.clear",
+    "energies.append",
+    "e.in_units_of",
+    "zip",
+    "simulation.context.getState",
+    "_to_openmm_context",
+    "sim_mol.add_conformer",
+    "simulation.context.setPositions",
+    "conf.GetId",
+    "minimized_mol.to_rdkit",
+    "enumerate",
+    "Chem.Mol",
+    "from_openmm",
+    "initial_energies.append",
+    "minimized_mol.add_conformer",
+    "simulation.minimizeEnergy",
+    "gradient.in_units_of",
+    "min_state.getPotentialEnergy",
+    "Molecule.from_rdkit",
+    "min_state.getPositions",
+    "sim_mol.clear_conformers",
+    "conformer.to_openmm",
+    "mol.GetConformers"
+  ],
+  "stickit.cli.main": [
+    "print",
+    "sum",
+    "json.dumps",
+    "sp.add_parser",
+    "runp.add_argument",
+    "load_config",
+    "stic_generation",
+    "ap.parse_args",
+    "ap.add_subparsers",
+    "len",
+    "argparse.ArgumentParser"
+  ],
+  "stickit.mopac.mopac_refine_and_prune": [
+    "subprocess.run",
+    "min",
+    "r.get",
+    "_resolve_mopac_exe",
+    "tempfile.TemporaryDirectory",
+    "conf_results.append",
+    "str",
+    "_have_mopac",
+    "RuntimeError",
+    "input_deck.with_suffix",
+    "cast",
+    "mopac_opts.get",
+    "_write_mopac",
+    "Path",
+    "cfg.get",
+    "float",
+    "parsed.get",
+    "_net_charge_from_formal",
+    "parse_mopac_output",
+    "isinstance",
+    "sum",
+    "results.get"
+  ],
+  "stickit.conformers._gypsum_confs": [
+    "Chem.SDMolSupplier",
+    "subprocess.run",
+    "tempfile.TemporaryDirectory",
+    "Path",
+    "RuntimeError",
+    "Chem.Mol",
+    "m2.GetConformers",
+    "outd.rglob",
+    "c.GetId",
+    "list",
+    "Chem.MolToSmiles",
+    "Chem.RemoveHs",
+    "ids.append",
+    "inp.write_text",
+    "str",
+    "base.AddConformer",
+    "base.GetConformers"
+  ],
+  "stickit.pipeline._single_parent": [
+    "enum_tautomers",
+    "Chem.MolToSmiles",
+    "STIC",
+    "set",
+    "str",
+    "next_frontier.append",
+    "stereo_key_for",
+    "enumerate_stereo_filtered",
+    "Chem.MolFromSmiles",
+    "range",
+    "Chem.rdmolops.NeedsHs",
+    "ionization_key",
+    "mopac_refine_and_prune",
+    "sticset.stics.append",
+    "make_conformers",
+    "STICSet",
+    "STICKey",
+    "Chem.SanitizeMol",
+    "tautomer_key",
+    "ti_enables_new_tautomer_rules",
+    "enum_ionization_states_dimorphite",
+    "seen_ti.add",
+    "minimize_openmm",
+    "ConformerRecord",
+    "canonical_parent_key",
+    "Chem.rdmolops.AddHs"
+  ],
+  "stickit.config.settings.Settings": [
+    "DBConfig",
+    "SecretsManagerConfig"
+  ],
+  "stickit.tautomer.enum_tautomers": [
+    "Chem.MolToSmiles",
+    "Parallelizer",
+    "mol.SetProp",
+    "obj.get_rdkit_mol",
+    "isinstance",
+    "MolContainer",
+    "containers.append",
+    "_name",
+    "hasattr",
+    "prepare_smiles",
+    "Chem.MolFromSmiles",
+    "variants.append",
+    "enumerate",
+    "Chem.Mol",
+    "getattr",
+    "list",
+    "apply_ph_from_config"
+  ],
+  "stickit.ml.registry.<module>": [
+    "mlflow.set_tracking_uri",
+    "Settings.load"
+  ],
+  "stickit.openmm_min._to_openmm_context": [
+    "_is_valid_forcefield",
+    "interchange.to_openmm_simulation",
+    "AmberToolsToolkitWrapper",
+    "offmol.to_topology",
+    "openmm.VerletIntegrator",
+    "Interchange.from_smirnoff",
+    "OFFForceField",
+    "OFFMol.from_rdkit",
+    "ValueError",
+    "have_antechamber",
+    "RDKitToolkitWrapper"
+  ],
+  "stickit.mopac._write_mopac": [
+    "Chem.MolToXYZBlock",
+    "mol.GetProp",
+    "f.write",
+    "open",
+    "f.writelines",
+    "mol.HasProp"
+  ],
+  "stickit.config.settings.Settings.load": [
+    "str",
+    "plain.exists",
+    "FileNotFoundError",
+    "shutil.which",
+    "boto3.client",
+    "DBConfig",
+    "resp.get",
+    "SecretsManagerConfig",
+    "_deep_merge",
+    "print",
+    "data.get",
+    "Settings",
+    "sm.get",
+    "data.update",
+    "yaml.safe_load",
+    "client.get_secret_value",
+    "enc.exists",
+    "json.loads",
+    "subprocess.check_output",
+    "plain.read_text"
+  ],
+  "stickit.parallel.spark.get_spark": [
+    "SparkSession.builder.appName"
+  ],
+  "stickit.ionization.enum_ionization_states_dimorphite": [
+    "protonate_smiles",
+    "min",
+    "max",
+    "round"
+  ],
+  "stickit.db.session.<module>": [
+    "create_engine",
+    "sessionmaker",
+    "Settings.load"
+  ],
+  "stickit.ionization.ionization_key": [
+    "a.GetFormalCharge",
+    "mol.GetAtoms",
+    "a.GetIdx",
+    "Chem.GetFormalCharge",
+    "tuple",
+    "sorted"
+  ],
+  "stickit.mopac._net_charge_from_formal": [
+    "atom.GetFormalCharge",
+    "mol.GetAtoms",
+    "sum"
+  ],
+  "stickit.tautomer.apply_ph_from_config": [
+    "config.get",
+    "gypsum_opts.update",
+    "cfg_ops.get"
+  ],
+  "stickit.utils.dump_outputs": [
+    "payload.append",
+    "os.makedirs",
+    "Chem.Mol",
+    "os.path.join",
+    "len",
+    "w.close",
+    "SDWriter",
+    "w.write",
+    "m.SetProp",
+    "open",
+    "st.annotations.get",
+    "json.dump"
+  ],
+  "stickit.conformers._rdkit_confs": [
+    "Chem.MMFFGetMoleculeProperties",
+    "CalcNumRotatableBonds",
+    "Chem.EmbedMultipleConfs"
+  ],
+  "stickit.mopac._resolve_mopac_exe": [
+    "str",
+    "p.exists",
+    "candidates.append",
+    "shutil.which",
+    "mopac_opts.get",
+    "Path",
+    "os.access",
+    "os.environ.get",
+    "isinstance"
+  ],
+  "stickit.mopac._parse_method": [
+    "re.search",
+    "m2.group",
+    "m.group"
+  ],
+  "stickit.mopac.parse_mopac_output": [
+    "Path",
+    "_parse_results_block",
+    "calcs.append",
+    "re.search",
+    "isinstance",
+    "rb.to_dict",
+    "str",
+    "_split_calculations"
+  ],
+  "stickit.openmm_min.have_antechamber": [
+    "subprocess.run",
+    "pathlib_which",
+    "str"
+  ],
+  "stickit.mopac._parse_results_block": [
+    "pat.finditer",
+    "str",
+    "bool",
+    "ThermoRow",
+    "thermos.append",
+    "re.findall",
+    "m.group",
+    "MopacCalcResult",
+    "_parse_method",
+    "int",
+    "_parse_version",
+    "re.compile",
+    "float",
+    "re.search"
+  ],
+  "stickit.data.STIC": [
+    "field"
+  ],
+  "stickit.config.settings._deep_merge": [
+    "b.items",
+    "out.get",
+    "isinstance",
+    "_deep_merge",
+    "dict"
+  ],
+  "stickit.tautomer.tautomer_key": [
+    "Chem.MolToSmiles",
+    "Chem.AddHs"
+  ],
+  "stickit.utils.parallel_map": [
+    "func",
+    "ex.submit",
+    "f.result",
+    "out.append",
+    "os.cpu_count",
+    "ray.get",
+    "ray.init",
+    "parallel_cfg.get",
+    "ProcessPoolExecutor",
+    "ray.is_initialized",
+    "_wrap.remote",
+    "as_completed"
+  ],
+  "stickit.data.STICSet": [
+    "field"
+  ],
+  "stickit.openmm_min._is_valid_forcefield": [
+    "get_available_force_fields"
+  ],
+  "stickit.db.models.Molecule": [
+    "mapped_column",
+    "String"
+  ],
+  "stickit.ml.registry.register_model": [
+    "mlflow.sklearn.log_model",
+    "mlflow.start_run",
+    "mlflow.log_params",
+    "mlflow.active_run",
+    "RuntimeError"
+  ],
+  "stickit.stereo.enumerate_stereo_filtered": [
+    "any",
+    "m.GetAtoms",
+    "StereoEnumerationOptions",
+    "a.HasProp",
+    "Chem.AssignStereochemistry",
+    "a.GetIdx",
+    "EnumerateStereoisomers",
+    "_exclude_labile_centers"
+  ],
+  "stickit.utils.load_config": [
+    "open",
+    "yaml.safe_load"
+  ],
+  "stickit.tautomer.enum_tautomers._name": [
+    "m.HasProp",
+    "m.GetProp"
+  ],
+  "stickit.utils.parallel_map._wrap": [
+    "func"
+  ],
+  "stickit.stereo._exclude_labile_centers": [
+    "set",
+    "a.GetIdx",
+    "a.GetTotalDegree",
+    "mol.GetAtoms",
+    "a.GetAtomicNum",
+    "mask.add"
+  ],
+  "stickit.utils.gpu.has_cuda": [
+    "torch.cuda.is_available",
+    "subprocess.check_output",
+    "shutil.which"
+  ],
+  "stickit.pipeline.stic_generation": [
+    "_single_parent",
+    "dump_outputs",
+    "list",
+    "parallel_map",
+    "smiles_iter_from_file"
+  ],
+  "stickit.mopac._have_mopac": [
+    "_resolve_mopac_exe",
+    "bool"
+  ],
+  "stickit.db.session.init_db": [
+    "Base.metadata.create_all"
+  ],
+  "stickit.data.ConformerRecord": [
+    "field"
+  ],
+  "stickit.conformers.make_conformers": [
+    "_rdkit_confs",
+    "_gypsum_confs"
+  ],
+  "stickit.utils.canonical_parent_key": [
+    "Chem.MolToSmiles",
+    "a.HasProp",
+    "a.ClearProp",
+    "Chem.Mol",
+    "m.GetAtoms"
+  ],
+  "stickit.utils.smiles_iter_from_file": [
+    "len",
+    "open",
+    "line.strip"
+  ],
+  "stickit.parallel.mp.run_parallel": [
+    "ProcessPoolExecutor",
+    "ex.submit",
+    "f.result",
+    "as_completed",
+    "out.append"
+  ],
+  "stickit.mopac._split_calculations": [
+    "re.split",
+    "blk.strip"
+  ],
+  "stickit.ml.registry.load_model": [
+    "mlflow.pyfunc.load_model"
+  ],
+  "stickit.data.MopacCalcResult.to_dict": [
+    "asdict"
+  ],
+  "stickit.config.settings.<module>": [
+    "Path"
+  ],
+  "stickit.parallel.spark.etl_example": [
+    "spark.read.parquet",
+    "df.limit"
+  ],
+  "stickit.stereo.stereo_key_for": [
+    "Chem.MolToSmiles"
+  ],
+  "stickit.ionization.ti_enables_new_tautomer_rules": [
+    "mol.HasSubstructMatch",
+    "Chem.MolFromSmarts"
+  ],
+  "stickit.mopac._parse_version": [
+    "re.search",
+    "m.group"
+  ],
+  "stickit.data.STICKey": [
+    "dataclass"
+  ],
+  "stickit.viz.style.apply_house_style": [
+    "sns.set_theme"
+  ]
+}

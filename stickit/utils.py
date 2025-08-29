@@ -13,7 +13,11 @@ from rdkit import Chem
 def pathlib_which(cmd: str) -> Optional[Path]:
     """Minimal pathlib 'which' that searches PATH (and PATHEXT on Windows)."""
     paths = os.environ.get("PATH", "").split(os.pathsep)
-    exts = os.environ.get("PATHEXT", ".EXE;.BAT;.CMD;.COM").split(os.pathsep) if os.name == "nt" else [""]
+    exts = (
+        os.environ.get("PATHEXT", ".EXE;.BAT;.CMD;.COM").split(os.pathsep)
+        if os.name == "nt"
+        else [""]
+    )
     for p in paths:
         if not p:
             continue
@@ -46,7 +50,7 @@ def smiles_iter_from_file(path):
 
 def canonical_parent_key(mol):
     m = Chem.Mol(mol)
-    [a.ClearProp('_CIPCode') for a in m.GetAtoms() if a.HasProp('_CIPCode')]
+    [a.ClearProp("_CIPCode") for a in m.GetAtoms() if a.HasProp("_CIPCode")]
     return Chem.MolToSmiles(m, isomericSmiles=False)
 
 
@@ -54,8 +58,11 @@ def parallel_map(func, items, parallel_cfg):
     backend = (parallel_cfg or {}).get("backend", "none")
     if backend == "ray":
         import ray
+
         if not ray.is_initialized():
-            ray.init(ignore_reinit_error=True, num_cpus=parallel_cfg.get("num_workers", None))
+            ray.init(
+                ignore_reinit_error=True, num_cpus=parallel_cfg.get("num_workers", None)
+            )
 
         @ray.remote
         def _wrap(x):
@@ -76,29 +83,35 @@ def parallel_map(func, items, parallel_cfg):
 
 
 def dump_outputs(sticsets, cfg):
-    outdir = cfg['io']['output_dir']
+    outdir = cfg["io"]["output_dir"]
     os.makedirs(outdir, exist_ok=True)
-    if cfg['io'].get('write_json', True):
+    if cfg["io"].get("write_json", True):
         payload = []
         for s in sticsets:
-            payload.append({
+            payload.append(
+                {
                     "parent_key": s.parent_key,
-                    "stics"     : [{
-                            "key"         : {
-                                    "parent_key"  : st.key.parent_key,
-                                    "tautomer_key": st.key.tautomer_key,
-                                    "ion_key"     : st.key.ion_key,
-                                    "stereo_key"  : st.key.stereo_key,
+                    "stics": [
+                        {
+                            "key": {
+                                "parent_key": st.key.parent_key,
+                                "tautomer_key": st.key.tautomer_key,
+                                "ion_key": st.key.ion_key,
+                                "stereo_key": st.key.stereo_key,
                             },
                             "n_conformers": len(st.conformers),
-                            "annotations" : st.annotations
-                    } for st in s.stics]
-            })
+                            "annotations": st.annotations,
+                        }
+                        for st in s.stics
+                    ],
+                }
+            )
         with open(os.path.join(outdir, "summary.json"), "w") as f:
             json.dump(payload, f, indent=2)
 
-    if cfg['io'].get('write_sdf', True):
+    if cfg["io"].get("write_sdf", True):
         from rdkit.Chem import SDWriter
+
         sdf = os.path.join(outdir, "stickit_conformers.sdf")
         w = SDWriter(sdf)
         for s in sticsets:

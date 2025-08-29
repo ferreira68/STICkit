@@ -1,11 +1,9 @@
 name: ci-augment
-
 on:
   pull_request:
   push:
     branches: [ main, master ]
   workflow_dispatch:
-
 jobs:
   quality:
     runs-on: ubuntu-latest
@@ -24,7 +22,7 @@ jobs:
         run: poetry install --with dev
       - name: Lint/Type/Tests/Docs/Diagrams
         run: |
-          make -f Makefile.stickit ci-check
+          make -f Makefile ci-check
       - name: Upload docs HTML
         uses: actions/upload-artifact@v4
         with:

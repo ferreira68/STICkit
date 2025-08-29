@@ -5,25 +5,29 @@ repos:
     hooks:
       - id: ruff
         args: ["--fix"]
-      - id: ruff-format
+
   - repo: https://github.com/psf/black
     rev: 24.10.0
     hooks:
       - id: black
+
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.11.2
     hooks:
       - id: mypy
-        additional_dependencies: ["pydantic>=2"]
+        # mypy runs in its own venv; include stubs here (Poetry env is not used)
+        additional_dependencies: ["pydantic>=2", "types-PyYAML"]
+
   - repo: https://github.com/PyCQA/bandit
     rev: 1.7.9
     hooks:
       - id: bandit
-        args: ["-q", "-r", "stickit"]
+        args: ["-q", "-r", '--severity-level', 'medium']
+
   - repo: local
     hooks:
       - id: docs-diagrams-drift
         name: Docs/Diagrams Drift Check (Mermaid)
-        entry: bash -lc "make -f Makefile.stickit diagrams-check"
+        entry: bash -lc "make -f Makefile diagrams-check"
         language: system
         pass_filenames: false

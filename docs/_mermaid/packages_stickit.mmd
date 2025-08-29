@@ -1,0 +1,36 @@
+classDiagram
+  class stickit {
+  }
+  class cli {
+  }
+  class conformers {
+  }
+  class data {
+  }
+  class ionization {
+  }
+  class mopac {
+  }
+  class openmm_min {
+  }
+  class pipeline {
+  }
+  class stereo {
+  }
+  class tautomer {
+  }
+  class utils {
+  }
+  stickit --> pipeline
+  cli --> pipeline
+  cli --> utils
+  mopac --> data
+  openmm_min --> utils
+  pipeline --> conformers
+  pipeline --> data
+  pipeline --> ionization
+  pipeline --> mopac
+  pipeline --> openmm_min
+  pipeline --> stereo
+  pipeline --> tautomer
+  pipeline --> utils

@@ -6,7 +6,9 @@ from rdkit.Chem import AllChem as Chem
 from rdkit.Chem.rdMolDescriptors import CalcNumRotatableBonds
 
 
-def _rdkit_confs(mol: Chem.Mol, num_confs: int = 0, rmsd_thresh: float = 0.3, n_threads: int = 16):
+def _rdkit_confs(
+    mol: Chem.Mol, num_confs: int = 0, rmsd_thresh: float = 0.3, n_threads: int = 16
+):
     if num_confs == 0:
         num_rot = CalcNumRotatableBonds(mol)
         if num_rot <= 7:
@@ -16,15 +18,17 @@ def _rdkit_confs(mol: Chem.Mol, num_confs: int = 0, rmsd_thresh: float = 0.3, n_
         else:
             num_confs = 300
 
-    _ = Chem.MMFFGetMoleculeProperties(mol, mmffVariant='MMFF94s')
-    confIds = Chem.EmbedMultipleConfs(mol,
-                                      numConfs=num_confs,
-                                      pruneRmsThresh=rmsd_thresh,
-                                      forceTol=0.01,
-                                      enforceChirality=True,
-                                      useExpTorsionAnglePrefs=True,
-                                      useBasicKnowledge=True,
-                                      numThreads=n_threads)
+    _ = Chem.MMFFGetMoleculeProperties(mol, mmffVariant="MMFF94s")
+    confIds = Chem.EmbedMultipleConfs(
+        mol,
+        numConfs=num_confs,
+        pruneRmsThresh=rmsd_thresh,
+        forceTol=0.01,
+        enforceChirality=True,
+        useExpTorsionAnglePrefs=True,
+        useBasicKnowledge=True,
+        numThreads=n_threads,
+    )
     return mol, confIds
 
 
@@ -35,13 +39,29 @@ def _gypsum_confs(mol, num_confs, rmsd_thresh):
         outd = Path(td) / "out"
         inp.write_text(f"{smi}\tSTIC\n")
         cmd = [
-                "gypsum_dl", "--source", str(inp), "--output_folder", str(outd),
-                "--add_hydrogens", "True",
-                "--enumerate_protomers", "False", "--enumerate_tautomers", "False", "--enumerate_enantiomers", "False",
-                "--max_variants_per_compound", "1",
-                "--max_conf", str(num_confs),
-                "--rmsd_thresh", str(rmsd_thresh),
-                "--precise_bond_geo", "True", "--thoroughness", "3"
+            "gypsum_dl",
+            "--source",
+            str(inp),
+            "--output_folder",
+            str(outd),
+            "--add_hydrogens",
+            "True",
+            "--enumerate_protomers",
+            "False",
+            "--enumerate_tautomers",
+            "False",
+            "--enumerate_enantiomers",
+            "False",
+            "--max_variants_per_compound",
+            "1",
+            "--max_conf",
+            str(num_confs),
+            "--rmsd_thresh",
+            str(rmsd_thresh),
+            "--precise_bond_geo",
+            "True",
+            "--thoroughness",
+            "3",
         ]
         subprocess.run(cmd, check=True)
         sdf = list(outd.rglob("*.sdf"))
@@ -59,8 +79,12 @@ def _gypsum_confs(mol, num_confs, rmsd_thresh):
 
 
 def make_conformers(mol, cfg):
-    engine = cfg['conformers']['engine']
+    engine = cfg["conformers"]["engine"]
     if engine == "gypsum":
-        return _gypsum_confs(mol, cfg['conformers']['num_confs'], cfg['conformers']['rmsd_thresh'])
+        return _gypsum_confs(
+            mol, cfg["conformers"]["num_confs"], cfg["conformers"]["rmsd_thresh"]
+        )
     else:
-        return _rdkit_confs(mol, cfg['conformers']['num_confs'], cfg['conformers']['rmsd_thresh'])
+        return _rdkit_confs(
+            mol, cfg["conformers"]["num_confs"], cfg["conformers"]["rmsd_thresh"]
+        )

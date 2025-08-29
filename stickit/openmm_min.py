@@ -6,12 +6,14 @@ from openmm import unit
 from openmm.app.simulation import Simulation
 from rdkit import Chem
 from rdkit.Chem import Mol as ROMol
+import subprocess
 
 from .utils import pathlib_which
 
 
 def _is_valid_forcefield(ff_name: str) -> bool:
     from openff.toolkit import get_available_force_fields
+
     return ff_name in get_available_force_fields()
 
 
@@ -26,7 +28,12 @@ def have_antechamber(deep: bool = False, timeout: float = 5.0) -> bool:
     if not deep:
         return True
     try:
-        cp = subprocess.run([path, "-h"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=timeout)
+        cp = subprocess.run(
+            [str(path), "-h"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            timeout=timeout,
+        )
         # Treat 'it started' as success; help may exit 0 or 1 depending on build
         return cp.returncode in (0, 1)
     except (OSError, subprocess.TimeoutExpired):
@@ -36,6 +43,7 @@ def have_antechamber(deep: bool = False, timeout: float = 5.0) -> bool:
 def _to_openmm_context(mol: ROMol, ff_name) -> Simulation:
     from openff.toolkit.topology import Molecule as OFFMol
     from openff.interchange import Interchange
+
     # from openff.toolkit.topology import Topology as OFFTop
     from openff.toolkit.typing.engines.smirnoff import ForceField as OFFForceField
     from openff.toolkit.utils import RDKitToolkitWrapper, AmberToolsToolkitWrapper
@@ -49,12 +57,16 @@ def _to_openmm_context(mol: ROMol, ff_name) -> Simulation:
     # Check if AmberTools is available.  If not, fallback to other charge models
     charge_kwargs = {}
     if have_antechamber():
-        AmberToolsToolkitWrapper().assign_partial_charges(offmol, partial_charge_method="am1bcc")
+        AmberToolsToolkitWrapper().assign_partial_charges(
+            offmol, partial_charge_method="am1bcc"
+        )
         charge_kwargs["charge_from_molecules"] = [offmol]
     elif offmol.partial_charges is not None:
         charge_kwargs["charge_from_molecules"] = [offmol]
     else:
-        RDKitToolkitWrapper().assign_partial_charges(offmol, partial_charge_method="gasteiger")
+        RDKitToolkitWrapper().assign_partial_charges(
+            offmol, partial_charge_method="gasteiger"
+        )
         charge_kwargs["charge_from_molecules"] = [offmol]
 
     interchange = Interchange.from_smirnoff(off_ff, offtop, **charge_kwargs)
@@ -65,14 +77,15 @@ def _to_openmm_context(mol: ROMol, ff_name) -> Simulation:
 
 
 def minimize_openmm(
-        mol: ROMol,
-        cfg: Mapping[str, Any],
-        conf_ids: Optional[list[int]] = None
+    mol: ROMol, cfg: Mapping[str, Any], conf_ids: Optional[list[int]] = None
 ) -> tuple[ROMol, dict[int, tuple[unit.Quantity, unit.Quantity]]]:
     from openff.toolkit import Molecule
-    ff = cfg['minimization']['forcefield_spec']
-    gradient = cfg['minimization']['gradient'] * unit.kilocalorie_per_mole / unit.angstrom
-    max_steps = cfg['minimization']['max_steps']
+
+    ff = cfg["minimization"]["forcefield_spec"]
+    gradient = (
+        cfg["minimization"]["gradient"] * unit.kilocalorie_per_mole / unit.angstrom
+    )
+    max_steps = cfg["minimization"]["max_steps"]
 
     # Process a subset of conformers if requested
     sim_mol = Molecule.from_rdkit(mol)
@@ -97,14 +110,18 @@ def minimize_openmm(
     simulation = _to_openmm_context(mol, ff)
     for conformer in sim_mol.conformers:
         simulation.context.setPositions(conformer.to_openmm())
-        initial_energies.append(simulation.context.getState(getEnergy=True).getPotentialEnergy())
+        initial_energies.append(
+            simulation.context.getState(getEnergy=True).getPotentialEnergy()
+        )
         simulation.minimizeEnergy(tolerance=tol, maxIterations=max_steps)
         min_state = simulation.context.getState(getEnergy=True, getPositions=True)
         energies.append(min_state.getPotentialEnergy())
         minimized_mol.add_conformer(from_openmm(min_state.getPositions()))
         result_mol = minimized_mol.to_rdkit()
 
-    initial_energies = [e.in_units_of(unit.kilocalorie_per_mole)._value for e in initial_energies]
+    initial_energies = [
+        e.in_units_of(unit.kilocalorie_per_mole)._value for e in initial_energies
+    ]
     energies = [e.in_units_of(unit.kilocalorie_per_mole)._value for e in energies]
     conformer_energies = dict(enumerate(zip(initial_energies, energies), start=0))
 

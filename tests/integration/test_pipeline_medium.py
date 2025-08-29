@@ -1,6 +1,7 @@
 import pytest
 from stickit.pipeline import stic_generation
 
+
 @pytest.mark.medium
 def test_pipeline_medium(cfg, medium_mols):
     # Increase conformers a bit for medium set

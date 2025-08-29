@@ -5,7 +5,9 @@ from typing import Any, Dict, List, Optional, Sequence, Union
 from rdkit import Chem
 
 
-def apply_ph_from_config(config: Dict[str, Any], gypsum_opts: Dict[str, Any]) -> Dict[str, Any]:
+def apply_ph_from_config(
+    config: Dict[str, Any], gypsum_opts: Dict[str, Any]
+) -> Dict[str, Any]:
     """
     Update `gypsum_opts` with pH-related options from `config['chem']`, if present.
     Mirrors the original snippet's behavior: only updates when 'chem' exists/truthy.
@@ -17,17 +19,17 @@ def apply_ph_from_config(config: Dict[str, Any], gypsum_opts: Dict[str, Any]) ->
         ph_delta = cfg_ops.get("ph_delta", 1.0)
         ph_tol = cfg_ops.get("ph_tol", 0.75)
         gypsum_opts.update(
-                min_ph=(base_ph - ph_delta),
-                max_ph=(base_ph + ph_delta),
-                pka_precision=ph_tol,
+            min_ph=(base_ph - ph_delta),
+            max_ph=(base_ph + ph_delta),
+            pka_precision=ph_tol,
         )
     return gypsum_opts
 
 
 def enum_tautomers(
-        mols: Union[Chem.Mol, Sequence[Chem.Mol]],
-        config: Optional[Dict[str, Any]] = None,
-        charge_aware: bool = True
+    mols: Union[Chem.Mol, Sequence[Chem.Mol]],
+    config: Optional[Dict[str, Any]] = None,
+    charge_aware: bool = True,
 ) -> List[Chem.Mol]:
     """
     Enumerate tautomeric and stereoisomeric states using Gypsum-DL's SMILES stage.
@@ -59,25 +61,25 @@ def enum_tautomers(
 
     # Build a default configuration (matches CLI semantics where practical)
     gypsum_opts: Dict[str, Any] = {
-            "job_manager"                   : "multiprocessing",
-            "num_processors"                : -1,  # like CLI: -1 => use all cores
-            "max_variants_per_compound"     : 10,
-            "thoroughness"                  : 16,
-            "min_ph"                        : 6.4,
-            "max_ph"                        : 8.4,
-            "pka_precision"                 : 0.75,
-            "let_tautomers_change_chirality": True,
-            "use_durrant_lab_filters"       : True,
-            "skip_adding_hydrogen"          : False,
-            "skip_making_tautomers"         : False,
-            "skip_enumerate_chiral_mol"     : False,
-            "skip_enumerate_double_bonds"   : False,
-            "skip_optimize_geometry"        : True,
-            # Keep anything downstream from trying 3D/output if you expand usage later
-            "2d_output_only"                : True,
-            "separate_output_files"         : False,
-            "add_pdb_output"                : False,
-            "add_html_output"               : False,
+        "job_manager": "multiprocessing",
+        "num_processors": -1,  # like CLI: -1 => use all cores
+        "max_variants_per_compound": 10,
+        "thoroughness": 16,
+        "min_ph": 6.4,
+        "max_ph": 8.4,
+        "pka_precision": 0.75,
+        "let_tautomers_change_chirality": True,
+        "use_durrant_lab_filters": True,
+        "skip_adding_hydrogen": False,
+        "skip_making_tautomers": False,
+        "skip_enumerate_chiral_mol": False,
+        "skip_enumerate_double_bonds": False,
+        "skip_optimize_geometry": True,
+        # Keep anything downstream from trying 3D/output if you expand usage later
+        "2d_output_only": True,
+        "separate_output_files": False,
+        "add_pdb_output": False,
+        "add_html_output": False,
     }
 
     # Set non-default options from config
@@ -87,7 +89,9 @@ def enum_tautomers(
         gypsum_opts = apply_ph_from_config(config, gypsum_opts)
 
     # Parallelizer (Gypsum-DL uses this object in the SMILES stage too)
-    gypsum_opts["Parallelizer"] = Parallelizer(gypsum_opts["job_manager"], gypsum_opts["num_processors"], True)
+    gypsum_opts["Parallelizer"] = Parallelizer(
+        gypsum_opts["job_manager"], gypsum_opts["num_processors"], True
+    )
 
     # Convert RDKit mols to MolContainers (Gypsum-DL SMILES stage input is SMILES)
     def _name(i: int, m: Chem.Mol) -> str:
@@ -102,7 +106,7 @@ def enum_tautomers(
     prepare_smiles(containers, gypsum_opts)
 
     # Collect RDKit molecules from the Gypsum containers
-    out: Dict[str, List[Chem.Mol]] = {}
+    # out: Dict[str, List[Chem.Mol]] = {}
     for cont in containers:
         variants: List[Chem.Mol] = []
         for obj in getattr(cont, "mols", []):

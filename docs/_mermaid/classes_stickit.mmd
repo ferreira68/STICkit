@@ -1,0 +1,54 @@
+classDiagram
+  class ConformerRecord {
+    conf_id : int
+    enthalpy : Dict[str, float]
+    free_energy : Optional[float]
+    n_imag_freq : Optional[int]
+    tags : Dict[str, str]
+  }
+  class MopacCalcResult {
+    charge : Optional[int]
+    eps : Optional[float]
+    gradient_norm : Optional[float]
+    heat_of_formation_kcal_mol : Optional[float]
+    homo_lumo_ev : Optional[List[float]]
+    ionization_potential_ev : Optional[float]
+    job_ended_normally : bool
+    method : Optional[str]
+    molecular_weight : Optional[float]
+    point_group : Optional[str]
+    principal_moi_1e_minus40_g_cm2 : Optional[Dict[str, float]]
+    rotational_constants_cm_inv : Optional[Dict[str, float]]
+    scf_achieved : bool
+    thermo : Optional[List[ThermoRow]]
+    version : Optional[str]
+    vibrational_frequencies_cm_inv : Optional[List[float]]
+    zero_point_energy : Optional[Dict[str, float | str]]
+    to_dict() Dict[str, Any]
+  }
+  class STIC {
+    annotations : Dict[str, str]
+    conformers : List[ConformerRecord]
+    key
+    mol
+  }
+  class STICKey {
+    ion_key : str
+    parent_key : str
+    stereo_key : str
+    tautomer_key : str
+  }
+  class STICSet {
+    parent_key : str
+    stics : List[STIC]
+    all_conformers()
+  }
+  class ThermoRow {
+    enthalpy_cal_mol : Optional[float]
+    entropy_cal_K_mol : Optional[float]
+    gibbs_free_energy_kcal_mol : Optional[float]
+    heat_capacity_cal_K_mol : Optional[float]
+    hof_kcal_mol : Optional[float]
+    temperature_K : float
+  }
+  STICKey --* STIC : key

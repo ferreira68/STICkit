@@ -1,4 +1,6 @@
-import os, sys
+import os
+import sys
+
 sys.path.insert(0, os.path.abspath(".."))
 
 # Project name
@@ -6,16 +8,16 @@ project = "stickit"
 
 # Sphinx extensions
 extensions = [
-        "sphinx.ext.autodoc",
-        "sphinx_autodoc_typehints",
-        "sphinxcontrib.mermaid",
-        "myst_parser",
+    "sphinx.ext.autodoc",
+    "sphinx_autodoc_typehints",
+    "sphinxcontrib.mermaid",
+    "myst_parser",
 ]
 
 # Set up theme
 html_theme = "nature"
 html_theme_options = {
-    "sidebarwidth": "24em",   # widen the sidebar to accommodate long function names
+    "sidebarwidth": "24em",  # widen the sidebar to accommodate long function names
 }
 
 # Autodoc settings

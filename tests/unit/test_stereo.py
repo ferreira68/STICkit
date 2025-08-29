@@ -1,6 +1,7 @@
 from rdkit import Chem
 from stickit.stereo import enumerate_stereo_filtered
 
+
 def test_pyramidal_n_excluded_by_default(test_cfg_base):
     cfg = dict(test_cfg_base)
     cfg["chem"] = dict(cfg["chem"])
@@ -9,6 +10,7 @@ def test_pyramidal_n_excluded_by_default(test_cfg_base):
     isos = list(enumerate_stereo_filtered(m, cfg))
     # we expect no artificially chiral N variants
     assert len(isos) == 1
+
 
 def test_include_atropisomers_flag(test_cfg_base):
     # Hindered biphenyl; our current filter is crude, so just check it runs

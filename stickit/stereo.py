@@ -1,5 +1,8 @@
 from rdkit import Chem
-from rdkit.Chem.EnumerateStereoisomers import EnumerateStereoisomers, StereoEnumerationOptions
+from rdkit.Chem.EnumerateStereoisomers import (
+    EnumerateStereoisomers,
+    StereoEnumerationOptions,
+)
 
 
 def _exclude_labile_centers(mol, allow_pyramidal_N=False):
@@ -15,13 +18,15 @@ def _exclude_labile_centers(mol, allow_pyramidal_N=False):
 
 def enumerate_stereo_filtered(mol, cfg):
     Chem.AssignStereochemistry(mol, cleanIt=True, force=True)
-    mask = _exclude_labile_centers(mol, cfg['chem']['allow_pyramidal_N'])
-    opts = StereoEnumerationOptions(tryEmbedding=False,
-                                    maxIsomers=cfg['chem']['max_stereoisomers'],
-                                    onlyUnassigned=True)
+    mask = _exclude_labile_centers(mol, cfg["chem"]["allow_pyramidal_N"])
+    opts = StereoEnumerationOptions(
+        tryEmbedding=False,
+        maxIsomers=cfg["chem"]["max_stereoisomers"],
+        onlyUnassigned=True,
+    )
     for m in EnumerateStereoisomers(mol, options=opts):
         bad = False
-        chiral_atoms = [a.GetIdx() for a in m.GetAtoms() if a.HasProp('_CIPCode')]
+        chiral_atoms = [a.GetIdx() for a in m.GetAtoms() if a.HasProp("_CIPCode")]
         if any(i in mask for i in chiral_atoms):
             bad = True
         if not bad:

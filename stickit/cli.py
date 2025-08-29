@@ -15,6 +15,10 @@ def main():
     args = ap.parse_args()
     if args.cmd == "run":
         cfg = load_config(args.config)
-        sticsets = stic_generation(config=cfg)  # will read input from cfg['io']['input']
-        summary = {s.parent_key: sum(len(st.conformers) for st in s.stics) for s in sticsets}
+        sticsets = stic_generation(
+            config=cfg
+        )  # will read input from cfg['io']['input']
+        summary = {
+            s.parent_key: sum(len(st.conformers) for st in s.stics) for s in sticsets
+        }
         print(json.dumps(summary, indent=2))

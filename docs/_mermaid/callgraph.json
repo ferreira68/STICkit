@@ -305,12 +305,8 @@
     "f.result",
     "out.append",
     "os.cpu_count",
-    "ray.get",
-    "ray.init",
     "parallel_cfg.get",
     "ProcessPoolExecutor",
-    "ray.is_initialized",
-    "_wrap.remote",
     "as_completed"
   ],
   "stickit.data.STICSet": [
@@ -347,9 +343,6 @@
   "stickit.tautomer.enum_tautomers._name": [
     "m.HasProp",
     "m.GetProp"
-  ],
-  "stickit.utils.parallel_map._wrap": [
-    "func"
   ],
   "stickit.stereo._exclude_labile_centers": [
     "set",

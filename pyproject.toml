@@ -94,3 +94,32 @@ filterwarnings = [
   "ignore:Deprecated call to `pkg_resources\\.declare_namespace.*`:DeprecationWarning:pkg_resources",
 ]
 
+[tool.mypy]
+python_version = "3.11"
+warn_unused_ignores = true
+# Treat untyped defs as Any to reduce noise from heavy scientific libs
+disallow_subclassing_any = false
+disallow_any_generics = false
+
+# Per-module overrides for non-typed libs
+[[tool.mypy.overrides]]
+module = [
+  "seaborn",
+  "boto3",
+  "mlflow",
+  "gypsum_dl",
+  "gypsum_dl.*",
+  "dimorphite_dl",
+  "dimorphite_dl.*",
+  "openmm",
+  "openmm.*",
+  "openff",
+  "openff.*",
+]
+ignore_missing_imports = true
+
+# RDKit is importable but stubs are partial; suppress attr-defined noise
+[[tool.mypy.overrides]]
+module = ["rdkit", "rdkit.*"]
+ignore_missing_imports = true
+disable_error_code = ["attr-defined"]

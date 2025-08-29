@@ -56,21 +56,7 @@ def canonical_parent_key(mol):
 
 def parallel_map(func, items, parallel_cfg):
     backend = (parallel_cfg or {}).get("backend", "none")
-    if backend == "ray":
-        import ray
-
-        if not ray.is_initialized():
-            ray.init(
-                ignore_reinit_error=True, num_cpus=parallel_cfg.get("num_workers", None)
-            )
-
-        @ray.remote
-        def _wrap(x):
-            return func(x)
-
-        return ray.get([_wrap.remote(x) for x in items])
-
-    elif backend == "multiprocessing":
+    if backend == "multiprocessing":
         n = parallel_cfg.get("num_workers", os.cpu_count() or 1)
         out = []
         with ProcessPoolExecutor(max_workers=n) as ex:

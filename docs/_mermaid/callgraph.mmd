@@ -59,7 +59,6 @@ graph TD
   "_single_parent"["_single_parent"]
   "_split_calculations"["_split_calculations"]
   "_to_openmm_context"["_to_openmm_context"]
-  "_wrap.remote"["_wrap.remote"]
   "_write_mopac"["_write_mopac"]
   "a.ClearProp"["a.ClearProp"]
   "a.GetAtomicNum"["a.GetAtomicNum"]
@@ -199,9 +198,6 @@ graph TD
   "protonate_smiles"["protonate_smiles"]
   "r.get"["r.get"]
   "range"["range"]
-  "ray.get"["ray.get"]
-  "ray.init"["ray.init"]
-  "ray.is_initialized"["ray.is_initialized"]
   "rb.to_dict"["rb.to_dict"]
   "re.compile"["re.compile"]
   "re.findall"["re.findall"]
@@ -281,7 +277,6 @@ graph TD
   "stickit.utils.dump_outputs"["stickit.utils.dump_outputs"]
   "stickit.utils.load_config"["stickit.utils.load_config"]
   "stickit.utils.parallel_map"["stickit.utils.parallel_map"]
-  "stickit.utils.parallel_map._wrap"["stickit.utils.parallel_map._wrap"]
   "stickit.utils.pathlib_which"["stickit.utils.pathlib_which"]
   "stickit.utils.smiles_iter_from_file"["stickit.utils.smiles_iter_from_file"]
   "stickit.viz.style.apply_house_style"["stickit.viz.style.apply_house_style"]
@@ -601,7 +596,6 @@ graph TD
   "stickit.utils.load_config" --> "open"
   "stickit.utils.load_config" --> "yaml.safe_load"
   "stickit.utils.parallel_map" --> "ProcessPoolExecutor"
-  "stickit.utils.parallel_map" --> "_wrap.remote"
   "stickit.utils.parallel_map" --> "as_completed"
   "stickit.utils.parallel_map" --> "ex.submit"
   "stickit.utils.parallel_map" --> "f.result"
@@ -609,10 +603,6 @@ graph TD
   "stickit.utils.parallel_map" --> "os.cpu_count"
   "stickit.utils.parallel_map" --> "out.append"
   "stickit.utils.parallel_map" --> "parallel_cfg.get"
-  "stickit.utils.parallel_map" --> "ray.get"
-  "stickit.utils.parallel_map" --> "ray.init"
-  "stickit.utils.parallel_map" --> "ray.is_initialized"
-  "stickit.utils.parallel_map._wrap" --> "func"
   "stickit.utils.pathlib_which" --> "Path"
   "stickit.utils.pathlib_which" --> "candidate.is_file"
   "stickit.utils.pathlib_which" --> "candidate.resolve"

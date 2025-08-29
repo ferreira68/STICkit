@@ -279,7 +279,6 @@ graph TD
   "stickit.tautomer.tautomer_key"["stickit.tautomer.tautomer_key"]
   "stickit.utils.canonical_parent_key"["stickit.utils.canonical_parent_key"]
   "stickit.utils.dump_outputs"["stickit.utils.dump_outputs"]
-  "stickit.utils.gpu.has_cuda"["stickit.utils.gpu.has_cuda"]
   "stickit.utils.load_config"["stickit.utils.load_config"]
   "stickit.utils.parallel_map"["stickit.utils.parallel_map"]
   "stickit.utils.parallel_map._wrap"["stickit.utils.parallel_map._wrap"]
@@ -295,7 +294,6 @@ graph TD
   "tempfile.TemporaryDirectory"["tempfile.TemporaryDirectory"]
   "thermos.append"["thermos.append"]
   "ti_enables_new_tautomer_rules"["ti_enables_new_tautomer_rules"]
-  "torch.cuda.is_available"["torch.cuda.is_available"]
   "tuple"["tuple"]
   "variants.append"["variants.append"]
   "w.close"["w.close"]
@@ -600,9 +598,6 @@ graph TD
   "stickit.utils.dump_outputs" --> "st.annotations.get"
   "stickit.utils.dump_outputs" --> "w.close"
   "stickit.utils.dump_outputs" --> "w.write"
-  "stickit.utils.gpu.has_cuda" --> "shutil.which"
-  "stickit.utils.gpu.has_cuda" --> "subprocess.check_output"
-  "stickit.utils.gpu.has_cuda" --> "torch.cuda.is_available"
   "stickit.utils.load_config" --> "open"
   "stickit.utils.load_config" --> "yaml.safe_load"
   "stickit.utils.parallel_map" --> "ProcessPoolExecutor"

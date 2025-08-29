@@ -359,11 +359,6 @@
     "a.GetAtomicNum",
     "mask.add"
   ],
-  "stickit.utils.gpu.has_cuda": [
-    "torch.cuda.is_available",
-    "subprocess.check_output",
-    "shutil.which"
-  ],
   "stickit.pipeline.stic_generation": [
     "_single_parent",
     "dump_outputs",

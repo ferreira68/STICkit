@@ -111,17 +111,19 @@ disallow_any_generics = false
 # Per-module overrides for non-typed libs
 [[tool.mypy.overrides]]
 module = [
-  "seaborn",
-  "boto3",
-  "mlflow",
-  "gypsum_dl",
-  "gypsum_dl.*",
-  "dimorphite_dl",
-  "dimorphite_dl.*",
-  "openmm",
-  "openmm.*",
-  "openff",
-  "openff.*",
+    "seaborn",
+    "boto3",
+    "mlflow",
+    "gypsum_dl",
+    "gypsum_dl.*",
+    "dimorphite_dl",
+    "dimorphite_dl.*",
+    "openmm",
+    "openmm.*",
+    "openff",
+    "openff.*",
+    "pyspark",
+    "pyspark.*",
 ]
 ignore_missing_imports = true
 

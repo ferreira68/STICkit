@@ -74,12 +74,7 @@ def _single_parent(smiles: str, name: str, cfg) -> Optional[STICSet]:
                     # C (Gypsum or RDKit) + OpenMM minimization
                     mol3d, conf_ids = make_conformers(mol_STI, cfg)
                     mol3d, e_kcal = minimize_openmm(mol3d, cfg, conf_ids)
-                    conformers = [
-                        ConformerRecord(
-                            conf_id=cid, enthalpy={"OpenMM": e_kcal[cid][1]}
-                        )
-                        for cid in conf_ids
-                    ]
+                    conformers = [ConformerRecord(conf_id=cid, enthalpy={"OpenMM": e_kcal[cid][1]}) for cid in conf_ids]
 
                     stic = STIC(
                         key=key,
@@ -107,9 +102,7 @@ def stic_generation(
     if molecules is None:
         molecules = smiles_iter_from_file(cfg["io"]["input"])
     work = list(molecules)
-    results = parallel_map(
-        lambda pair: _single_parent(pair[0], pair[1], cfg), work, cfg["parallel"]
-    )
+    results = parallel_map(lambda pair: _single_parent(pair[0], pair[1], cfg), work, cfg["parallel"])
     sticsets = [r for r in results if r is not None]
     dump_outputs(sticsets, cfg)
     return sticsets

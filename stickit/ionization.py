@@ -2,9 +2,7 @@ from dimorphite_dl.protonate.run import protonate_smiles
 from rdkit import Chem
 
 
-def enum_ionization_states_dimorphite(
-    smi: str, pH: float, dPH: float, max_variants: int = 256
-):
+def enum_ionization_states_dimorphite(smi: str, pH: float, dPH: float, max_variants: int = 256):
     lo, hi = round(pH - dPH, 1), round(pH + dPH, 1)
     protomers = protonate_smiles(
         smiles_input=smi,

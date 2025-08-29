@@ -17,7 +17,7 @@ psycopg = {version = "^3.2.1", extras=["binary"]}
 pydantic = "^2.11.7"
 pydantic-settings = "^2.4.0"
 boto3 = "^1.34.162"
-mlflow = "^1.26.0"
+mlflow = "^2.0.0"
 streamlit = "^1.37.1"
 bokeh = "^3.5.0"
 seaborn = "^0.13.2"
@@ -94,3 +94,41 @@ filterwarnings = [
   "ignore:Deprecated call to `pkg_resources\\.declare_namespace.*`:DeprecationWarning:pkg_resources",
 ]
 
+[tool.black]
+line-length = 120
+target-version = ["py311"]
+
+[tool.ruff]
+line-length = 120
+
+[tool.mypy]
+python_version = "3.11"
+warn_unused_ignores = true
+# Treat untyped defs as Any to reduce noise from heavy scientific libs
+disallow_subclassing_any = false
+disallow_any_generics = false
+
+# Per-module overrides for non-typed libs
+[[tool.mypy.overrides]]
+module = [
+    "seaborn",
+    "boto3",
+    "mlflow",
+    "gypsum_dl",
+    "gypsum_dl.*",
+    "dimorphite_dl",
+    "dimorphite_dl.*",
+    "openmm",
+    "openmm.*",
+    "openff",
+    "openff.*",
+    "pyspark",
+    "pyspark.*",
+]
+ignore_missing_imports = true
+
+# RDKit is importable but stubs are partial; suppress attr-defined noise
+[[tool.mypy.overrides]]
+module = ["rdkit", "rdkit.*"]
+ignore_missing_imports = true
+disable_error_code = ["attr-defined"]

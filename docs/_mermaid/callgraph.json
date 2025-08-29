@@ -233,11 +233,6 @@
     "st.annotations.get",
     "json.dump"
   ],
-  "stickit.conformers._rdkit_confs": [
-    "Chem.MMFFGetMoleculeProperties",
-    "CalcNumRotatableBonds",
-    "Chem.EmbedMultipleConfs"
-  ],
   "stickit.mopac._resolve_mopac_exe": [
     "str",
     "p.exists",
@@ -305,12 +300,8 @@
     "f.result",
     "out.append",
     "os.cpu_count",
-    "ray.get",
-    "ray.init",
     "parallel_cfg.get",
     "ProcessPoolExecutor",
-    "ray.is_initialized",
-    "_wrap.remote",
     "as_completed"
   ],
   "stickit.data.STICSet": [
@@ -348,9 +339,6 @@
     "m.HasProp",
     "m.GetProp"
   ],
-  "stickit.utils.parallel_map._wrap": [
-    "func"
-  ],
   "stickit.stereo._exclude_labile_centers": [
     "set",
     "a.GetIdx",
@@ -358,11 +346,6 @@
     "mol.GetAtoms",
     "a.GetAtomicNum",
     "mask.add"
-  ],
-  "stickit.utils.gpu.has_cuda": [
-    "torch.cuda.is_available",
-    "subprocess.check_output",
-    "shutil.which"
   ],
   "stickit.pipeline.stic_generation": [
     "_single_parent",
@@ -397,6 +380,11 @@
     "open",
     "line.strip"
   ],
+  "stickit.conformers._rdkit_confs": [
+    "EmbedMultipleConfs",
+    "CalcNumRotatableBonds",
+    "MMFFGetMoleculeProperties"
+  ],
   "stickit.parallel.mp.run_parallel": [
     "ProcessPoolExecutor",
     "ex.submit",
@@ -410,6 +398,9 @@
   ],
   "stickit.ml.registry.load_model": [
     "mlflow.pyfunc.load_model"
+  ],
+  "stickit.parallel.spark.<module>": [
+    "print"
   ],
   "stickit.data.MopacCalcResult.to_dict": [
     "asdict"

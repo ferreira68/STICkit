@@ -11,9 +11,7 @@ def register_model(model: Any, artifact_path: str, params: dict | None = None) -
     with mlflow.start_run():
         if params:
             mlflow.log_params(params)
-        mlflow.sklearn.log_model(
-            model, artifact_path=artifact_path
-        )  # change flavor as needed
+        mlflow.sklearn.log_model(model, artifact_path=artifact_path)  # change flavor as needed
         run = mlflow.active_run()
         if run is None:
             raise RuntimeError("mlflow.active_run() returned None")

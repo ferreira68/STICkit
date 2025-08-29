@@ -42,9 +42,7 @@ def list_py_files() -> list[str]:
 
 
 def run(cmd: Sequence[str] | str) -> str:
-    proc: CompletedProcess[str] = subprocess.run(
-        cmd, capture_output=True, text=True, timeout=30
-    )  # nosec B603
+    proc: CompletedProcess[str] = subprocess.run(cmd, capture_output=True, text=True, timeout=30)  # nosec B603
     if proc.returncode != 0:
         raise RuntimeError(proc.stderr or proc.stdout)
     return proc.stdout
@@ -86,9 +84,7 @@ def try_pycg(files: list[str]) -> Dict[str, list[str]] | None:
             run(cmd)
             if tmp_json.exists():
                 part = json.loads(tmp_json.read_text(encoding="utf-8") or "{}")
-                b_typed: Dict[str, list[str]] = (
-                    cast(Dict[str, list[str]], part) if isinstance(part, dict) else {}
-                )
+                b_typed: Dict[str, list[str]] = cast(Dict[str, list[str]], part) if isinstance(part, dict) else {}
                 merged = merge_adj(merged, b_typed)
                 tmp_json.unlink(missing_ok=True)
         except Exception:

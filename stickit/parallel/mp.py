@@ -3,9 +3,7 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 from typing import Iterable, Callable, Any
 
 
-def run_parallel(
-    items: Iterable[Any], fn: Callable[[Any], Any], max_workers: int | None = None
-) -> list[Any]:
+def run_parallel(items: Iterable[Any], fn: Callable[[Any], Any], max_workers: int | None = None) -> list[Any]:
     """Run CPU-bound tasks in parallel using processes."""
     out: list[Any] = []
     with ProcessPoolExecutor(max_workers=max_workers) as ex:

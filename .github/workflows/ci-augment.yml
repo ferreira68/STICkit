@@ -27,6 +27,7 @@ jobs:
       - name: Lint/Type/Tests/Docs/Diagrams
         run: |
           poetry run make -f Makefile ci-check
+
       - name: Upload docs HTML
         uses: actions/upload-artifact@v4
         with:

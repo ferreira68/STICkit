@@ -4,9 +4,7 @@ graph TD
   "CalcNumRotatableBonds"["CalcNumRotatableBonds"]
   "Chem.AddHs"["Chem.AddHs"]
   "Chem.AssignStereochemistry"["Chem.AssignStereochemistry"]
-  "Chem.EmbedMultipleConfs"["Chem.EmbedMultipleConfs"]
   "Chem.GetFormalCharge"["Chem.GetFormalCharge"]
-  "Chem.MMFFGetMoleculeProperties"["Chem.MMFFGetMoleculeProperties"]
   "Chem.Mol"["Chem.Mol"]
   "Chem.MolFromSmarts"["Chem.MolFromSmarts"]
   "Chem.MolFromSmiles"["Chem.MolFromSmiles"]
@@ -19,9 +17,11 @@ graph TD
   "Chem.rdmolops.NeedsHs"["Chem.rdmolops.NeedsHs"]
   "ConformerRecord"["ConformerRecord"]
   "DBConfig"["DBConfig"]
+  "EmbedMultipleConfs"["EmbedMultipleConfs"]
   "EnumerateStereoisomers"["EnumerateStereoisomers"]
   "FileNotFoundError"["FileNotFoundError"]
   "Interchange.from_smirnoff"["Interchange.from_smirnoff"]
+  "MMFFGetMoleculeProperties"["MMFFGetMoleculeProperties"]
   "MolContainer"["MolContainer"]
   "Molecule.from_rdkit"["Molecule.from_rdkit"]
   "MopacCalcResult"["MopacCalcResult"]
@@ -59,7 +59,6 @@ graph TD
   "_single_parent"["_single_parent"]
   "_split_calculations"["_split_calculations"]
   "_to_openmm_context"["_to_openmm_context"]
-  "_wrap.remote"["_wrap.remote"]
   "_write_mopac"["_write_mopac"]
   "a.ClearProp"["a.ClearProp"]
   "a.GetAtomicNum"["a.GetAtomicNum"]
@@ -199,9 +198,6 @@ graph TD
   "protonate_smiles"["protonate_smiles"]
   "r.get"["r.get"]
   "range"["range"]
-  "ray.get"["ray.get"]
-  "ray.init"["ray.init"]
-  "ray.is_initialized"["ray.is_initialized"]
   "rb.to_dict"["rb.to_dict"]
   "re.compile"["re.compile"]
   "re.findall"["re.findall"]
@@ -266,6 +262,7 @@ graph TD
   "stickit.openmm_min.have_antechamber"["stickit.openmm_min.have_antechamber"]
   "stickit.openmm_min.minimize_openmm"["stickit.openmm_min.minimize_openmm"]
   "stickit.parallel.mp.run_parallel"["stickit.parallel.mp.run_parallel"]
+  "stickit.parallel.spark.<module>"["stickit.parallel.spark.<module>"]
   "stickit.parallel.spark.etl_example"["stickit.parallel.spark.etl_example"]
   "stickit.parallel.spark.get_spark"["stickit.parallel.spark.get_spark"]
   "stickit.pipeline._single_parent"["stickit.pipeline._single_parent"]
@@ -279,10 +276,8 @@ graph TD
   "stickit.tautomer.tautomer_key"["stickit.tautomer.tautomer_key"]
   "stickit.utils.canonical_parent_key"["stickit.utils.canonical_parent_key"]
   "stickit.utils.dump_outputs"["stickit.utils.dump_outputs"]
-  "stickit.utils.gpu.has_cuda"["stickit.utils.gpu.has_cuda"]
   "stickit.utils.load_config"["stickit.utils.load_config"]
   "stickit.utils.parallel_map"["stickit.utils.parallel_map"]
-  "stickit.utils.parallel_map._wrap"["stickit.utils.parallel_map._wrap"]
   "stickit.utils.pathlib_which"["stickit.utils.pathlib_which"]
   "stickit.utils.smiles_iter_from_file"["stickit.utils.smiles_iter_from_file"]
   "stickit.viz.style.apply_house_style"["stickit.viz.style.apply_house_style"]
@@ -295,7 +290,6 @@ graph TD
   "tempfile.TemporaryDirectory"["tempfile.TemporaryDirectory"]
   "thermos.append"["thermos.append"]
   "ti_enables_new_tautomer_rules"["ti_enables_new_tautomer_rules"]
-  "torch.cuda.is_available"["torch.cuda.is_available"]
   "tuple"["tuple"]
   "variants.append"["variants.append"]
   "w.close"["w.close"]
@@ -359,8 +353,8 @@ graph TD
   "stickit.conformers._gypsum_confs" --> "subprocess.run"
   "stickit.conformers._gypsum_confs" --> "tempfile.TemporaryDirectory"
   "stickit.conformers._rdkit_confs" --> "CalcNumRotatableBonds"
-  "stickit.conformers._rdkit_confs" --> "Chem.EmbedMultipleConfs"
-  "stickit.conformers._rdkit_confs" --> "Chem.MMFFGetMoleculeProperties"
+  "stickit.conformers._rdkit_confs" --> "EmbedMultipleConfs"
+  "stickit.conformers._rdkit_confs" --> "MMFFGetMoleculeProperties"
   "stickit.conformers.make_conformers" --> "_gypsum_confs"
   "stickit.conformers.make_conformers" --> "_rdkit_confs"
   "stickit.data.ConformerRecord" --> "field"
@@ -510,6 +504,7 @@ graph TD
   "stickit.parallel.mp.run_parallel" --> "ex.submit"
   "stickit.parallel.mp.run_parallel" --> "f.result"
   "stickit.parallel.mp.run_parallel" --> "out.append"
+  "stickit.parallel.spark.<module>" --> "print"
   "stickit.parallel.spark.etl_example" --> "df.limit"
   "stickit.parallel.spark.etl_example" --> "spark.read.parquet"
   "stickit.parallel.spark.get_spark" --> "SparkSession.builder.appName"
@@ -600,13 +595,9 @@ graph TD
   "stickit.utils.dump_outputs" --> "st.annotations.get"
   "stickit.utils.dump_outputs" --> "w.close"
   "stickit.utils.dump_outputs" --> "w.write"
-  "stickit.utils.gpu.has_cuda" --> "shutil.which"
-  "stickit.utils.gpu.has_cuda" --> "subprocess.check_output"
-  "stickit.utils.gpu.has_cuda" --> "torch.cuda.is_available"
   "stickit.utils.load_config" --> "open"
   "stickit.utils.load_config" --> "yaml.safe_load"
   "stickit.utils.parallel_map" --> "ProcessPoolExecutor"
-  "stickit.utils.parallel_map" --> "_wrap.remote"
   "stickit.utils.parallel_map" --> "as_completed"
   "stickit.utils.parallel_map" --> "ex.submit"
   "stickit.utils.parallel_map" --> "f.result"
@@ -614,10 +605,6 @@ graph TD
   "stickit.utils.parallel_map" --> "os.cpu_count"
   "stickit.utils.parallel_map" --> "out.append"
   "stickit.utils.parallel_map" --> "parallel_cfg.get"
-  "stickit.utils.parallel_map" --> "ray.get"
-  "stickit.utils.parallel_map" --> "ray.init"
-  "stickit.utils.parallel_map" --> "ray.is_initialized"
-  "stickit.utils.parallel_map._wrap" --> "func"
   "stickit.utils.pathlib_which" --> "Path"
   "stickit.utils.pathlib_which" --> "candidate.is_file"
   "stickit.utils.pathlib_which" --> "candidate.resolve"

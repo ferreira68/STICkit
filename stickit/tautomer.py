@@ -5,9 +5,7 @@ from typing import Any, Dict, List, Optional, Sequence, Union
 from rdkit import Chem
 
 
-def apply_ph_from_config(
-    config: Dict[str, Any], gypsum_opts: Dict[str, Any]
-) -> Dict[str, Any]:
+def apply_ph_from_config(config: Dict[str, Any], gypsum_opts: Dict[str, Any]) -> Dict[str, Any]:
     """
     Update `gypsum_opts` with pH-related options from `config['chem']`, if present.
     Mirrors the original snippet's behavior: only updates when 'chem' exists/truthy.
@@ -89,9 +87,7 @@ def enum_tautomers(
         gypsum_opts = apply_ph_from_config(config, gypsum_opts)
 
     # Parallelizer (Gypsum-DL uses this object in the SMILES stage too)
-    gypsum_opts["Parallelizer"] = Parallelizer(
-        gypsum_opts["job_manager"], gypsum_opts["num_processors"], True
-    )
+    gypsum_opts["Parallelizer"] = Parallelizer(gypsum_opts["job_manager"], gypsum_opts["num_processors"], True)
 
     # Convert RDKit mols to MolContainers (Gypsum-DL SMILES stage input is SMILES)
     def _name(i: int, m: Chem.Mol) -> str:

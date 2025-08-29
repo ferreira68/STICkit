@@ -13,11 +13,7 @@ from rdkit import Chem
 def pathlib_which(cmd: str) -> Optional[Path]:
     """Minimal pathlib 'which' that searches PATH (and PATHEXT on Windows)."""
     paths = os.environ.get("PATH", "").split(os.pathsep)
-    exts = (
-        os.environ.get("PATHEXT", ".EXE;.BAT;.CMD;.COM").split(os.pathsep)
-        if os.name == "nt"
-        else [""]
-    )
+    exts = os.environ.get("PATHEXT", ".EXE;.BAT;.CMD;.COM").split(os.pathsep) if os.name == "nt" else [""]
     for p in paths:
         if not p:
             continue
@@ -56,21 +52,7 @@ def canonical_parent_key(mol):
 
 def parallel_map(func, items, parallel_cfg):
     backend = (parallel_cfg or {}).get("backend", "none")
-    if backend == "ray":
-        import ray
-
-        if not ray.is_initialized():
-            ray.init(
-                ignore_reinit_error=True, num_cpus=parallel_cfg.get("num_workers", None)
-            )
-
-        @ray.remote
-        def _wrap(x):
-            return func(x)
-
-        return ray.get([_wrap.remote(x) for x in items])
-
-    elif backend == "multiprocessing":
+    if backend == "multiprocessing":
         n = parallel_cfg.get("num_workers", os.cpu_count() or 1)
         out = []
         with ProcessPoolExecutor(max_workers=n) as ex:

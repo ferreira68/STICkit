@@ -9,4 +9,5 @@ A pipeline for generating STICs (Stereoisomer, Tautomer, Ionization state, Confo
    api
    flowchart
    developer-setup
+   diagrams_stickit
 
